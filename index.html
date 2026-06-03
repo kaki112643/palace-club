@@ -34,18 +34,22 @@ nav{
   display:flex;align-items:center;gap:0.4rem;
   color:var(--muted);text-decoration:none;
   font-size:0.78rem;letter-spacing:0.08em;
-  padding:0 1rem;height:62px;
+  padding:0 1rem;
   border-bottom:2px solid transparent;
-  transition:all 0.25s;
+  transition:color 0.25s, border-color 0.25s;
 }
 .nav-links a:hover,.nav-links a.active{color:var(--gold);border-bottom-color:var(--gold)}
 .nav-reserve{
   background:var(--gold);color:#06080b!important;
   font-weight:700;border-radius:2px;
-  height:36px!important;padding:0 1.2rem!important;
   border-bottom:none!important;margin-left:0.8rem;
 }
 .nav-reserve:hover{background:var(--gold2)!important}
+/* PCのみ: ナビリンクの高さ */
+@media(min-width:769px){
+  .nav-links a{ height:62px; }
+  .nav-reserve{ height:36px; padding:0 1.2rem; }
+}
 
 /* ===== BUTTONS ===== */
 .btn-primary{
@@ -396,147 +400,125 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   nav { padding: 0 1rem; height: 54px; }
   .nav-logo { font-size: 1.1rem; }
 
-  /* PC用メニューを隠す */
-  .nav-links { display: none !important; }
+  /* PCメニューを隠す */
+  .nav-links { display: none; }
 
-  /* ハンバーガーボタン表示 */
-  .nav-hamburger {
-    display: flex !important;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    padding: 6px;
-  }
-  .nav-hamburger span {
-    display: block;
-    width: 22px; height: 2px;
-    background: var(--gold);
-    border-radius: 2px;
-    transition: all 0.3s;
-  }
-  .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  /* ハンバーガー表示 */
+  .nav-hamburger { display: flex !important; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+  .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--gold); border-radius: 2px; transition: all 0.3s; }
+  .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
   .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-  .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
 
-  /* メニューが開いた状態 */
-  .nav-links.open {
+  /* メニューopen — 全上書き */
+  ul.nav-links.open {
     display: flex !important;
-    flex-direction: column;
-    position: fixed;
-    top: 54px; left: 0; right: 0; bottom: 0;
-    background: rgba(6,8,11,0.98);
-    z-index: 199;
-    padding: 1.5rem;
-    overflow-y: auto;
-    gap: 0;
-  }
-  /* ← height:62px と color:var(--muted) を上書き */
-  .nav-links.open li { list-style: none; }
-  .nav-links.open li a {
-    display: block !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 54px !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+    background: #08090c !important;
+    z-index: 999 !important;
+    padding: 1rem !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    list-style: none !important;
+    gap: 0 !important;
     height: auto !important;
-    padding: 1.1rem 1rem !important;
+    width: 100% !important;
+  }
+  ul.nav-links.open > li { display: block !important; width: 100% !important; }
+  ul.nav-links.open > li > a {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 54px !important;
+    line-height: 54px !important;
+    padding: 0 1rem !important;
     font-size: 1rem !important;
     color: #f0ece4 !important;
-    letter-spacing: 0.05em !important;
-    border-bottom: 1px solid rgba(201,168,76,0.15) !important;
-    border-left: none !important;
-    border-top: none !important;
     background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(201,168,76,0.15) !important;
     text-decoration: none !important;
+    letter-spacing: 0.05em !important;
   }
-  .nav-links.open li a:hover,
-  .nav-links.open li a.active { color: var(--gold) !important; }
-  .nav-links.open .nav-reserve {
+  ul.nav-links.open > li > a:hover { color: var(--gold) !important; }
+  ul.nav-links.open > li > a.nav-reserve {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin-top: 1.5rem !important;
     height: 52px !important;
+    line-height: 1 !important;
+    margin-top: 1rem !important;
     background: var(--gold) !important;
     color: #06080b !important;
-    font-size: 1rem !important;
-    border: none !important;
     border-radius: 4px !important;
-    padding: 0 !important;
+    border: none !important;
   }
 
   /* ── HOME ── */
   #home { padding-top: 54px; }
-  #home > div > div { padding: 2rem 1rem 1.5rem !important; }
   #home h1 { font-size: 2rem !important; }
 
-  /* ビリヤード詳細グリッド → 1列 */
-  .billiard-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
-  #home [style*="grid-template-columns:1fr 1fr"] {
-    grid-template-columns: 1fr !important;
-    gap: 1.5rem !important;
-  }
-
-  /* スライドショー */
-  .billiard-slideshow-wrap { padding: 0 1rem 2rem; }
-
-  /* ── GOLF ── */
-  #golf > div { padding: 4rem 1rem !important; }
-  .golf-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
-  .equipment-grid { grid-template-columns: 1fr 1fr !important; }
-
-  /* ── MAHJONG ── */
-  #mahjong > div { padding: 4rem 1rem !important; }
-  .mahjong-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
-  .mahjong-concept { grid-template-columns: 1fr !important; }
-
-  /* ── EVENTS ── */
-  #events > div { padding: 4rem 1rem !important; }
-  .event-grid { grid-template-columns: 1fr !important; }
-
-  /* ── ギャラリー＆予約 → 確実に1列 ── */
-  #gallery > div { padding: 4rem 1rem !important; }
+  /* 2列グリッドをすべて1列に */
+  .billiard-grid,
+  .golf-grid,
+  .mahjong-grid,
   .gallery-res-grid {
     grid-template-columns: 1fr !important;
     gap: 1.5rem !important;
   }
-  /* sticky解除 */
-  #resFormWrap { position: static !important; top: auto !important; }
+  #home [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
 
-  /* エリア図 — 全幅・コンパクト・他ページと同じ幅 */
+  /* スライドショー */
+  .billiard-slideshow-wrap { padding: 0 1rem 2rem; }
+
+  /* ゴルフ設備グリッド */
+  #golf > div { padding: 3.5rem 1rem !important; }
+  .equipment-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* 麻雀 */
+  #mahjong > div { padding: 3.5rem 1rem !important; }
+  .mahjong-concept { grid-template-columns: 1fr !important; }
+
+  /* イベント */
+  #events > div { padding: 3.5rem 1rem !important; }
+  .event-grid { grid-template-columns: 1fr !important; }
+
+  /* ギャラリー */
+  #gallery > div { padding: 3rem 1rem !important; }
+  #resFormWrap { position: static !important; }
+
+  /* エリア図 — 他ページと同じ幅・4:3比率 */
   .area-map {
     width: 100% !important;
-    max-width: 100% !important;
     aspect-ratio: 4/3 !important;
     min-height: unset !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
   }
-  .zone-billiard { top: 8%; left: 3%; width: 55%; height: 52%; }
-  .zone-golf     { top: 8%; left: 62%; width: 34%; height: 38%; }
-  .zone-mahjong  { top: 52%; left: 62%; width: 34%; height: 30%; }
-  .zone-entrance { top: 68%; left: 3%; width: 55%; height: 18%; }
+  .zone-billiard { top:8%; left:3%; width:54%; height:50%; }
+  .zone-golf     { top:8%; left:61%; width:35%; height:36%; }
+  .zone-mahjong  { top:50%; left:61%; width:35%; height:30%; }
+  .zone-entrance { top:65%; left:3%; width:54%; height:20%; }
   .area-zone-label { font-size: 0.58rem; }
   .area-zone-sub   { display: none; }
-  .area-zone > div:first-child { font-size: 1.3rem; }
 
-  /* ミニ写真 */
+  /* 写真ビューアー */
   .mini-slide { width: 80px; height: 55px; }
 
   /* 予約フォーム */
-  #resPanel [style*="grid-template-columns:1fr 1fr"] {
-    grid-template-columns: 1fr !important;
-  }
-  #tableGrid { grid-template-columns: repeat(6, 1fr) !important; }
+  #resPanel [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+  #tableGrid button { font-size: 0.65rem; padding: 0.3rem 0; }
 
   /* 価格テーブル */
-  .price-table { font-size: 0.78rem; }
-  .price-table td, .price-table th { padding: 0.45rem 0.5rem; }
+  .price-table { font-size: 0.8rem; }
+  .price-table td, .price-table th { padding: 0.5rem; }
 
   /* フッター */
   footer { padding: 3rem 1rem 2rem; }
-  .footer-inner { grid-template-columns: 1fr !important; gap: 2rem !important; }
+  .footer-inner { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
   .footer-bottom { flex-direction: column; gap: 0.4rem; text-align: center; }
-
-  /* ボタン */
-  .btn-primary { padding: 0.8rem 1.5rem; font-size: 0.85rem; }
 }
+
 
 @media (max-width: 400px) {
   #home h1 { font-size: 1.7rem !important; }
