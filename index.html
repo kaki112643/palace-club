@@ -372,162 +372,161 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
 
-/* ==============================================
-   MOBILE RESPONSIVE — スマートフォン完全対応
-   ============================================== */
+/* ============================================================
+   GALLERY GRID — PC: 2列、スマホ: 1列
+   ============================================================ */
+.gallery-res-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
 
-/* ---- ハンバーガーボタン: PC非表示 ---- */
-.nav-hamburger { display:none }
+/* ============================================================
+   HAMBURGER — PCは非表示
+   ============================================================ */
+.nav-hamburger { display: none; }
 
-@media (max-width:768px){
+/* ============================================================
+   スマートフォン対応 (768px以下)
+   ============================================================ */
+@media (max-width: 768px) {
 
-  /* NAV */
-  nav { padding:0 1rem; height:54px; }
-  .nav-logo { font-size:1.1rem; letter-spacing:0.15em; }
-  .nav-links { display:none; }
-  .nav-links.open {
-    display:flex !important; flex-direction:column;
-    position:fixed; top:54px; left:0; right:0; bottom:0;
-    background:rgba(6,8,11,0.98); backdrop-filter:blur(20px);
-    z-index:199; padding:1.5rem; gap:0; overflow-y:auto;
-  }
-  .nav-links.open li a {
-    display:block; height:auto; padding:1rem 0.5rem;
-    font-size:1rem; letter-spacing:0.05em;
-    border-bottom:1px solid rgba(201,168,76,0.12);
-    border-left:none; color:var(--text);
-  }
-  .nav-links.open li a.active,
-  .nav-links.open li a:hover { color:var(--gold); }
-  .nav-links.open .nav-reserve {
-    margin-top:1.5rem; height:50px !important; padding:0 !important;
-    display:flex !important; align-items:center; justify-content:center;
-    background:var(--gold); color:#06080b !important;
-    font-size:1rem !important; border-radius:4px;
-    border-bottom:none !important;
-  }
+  /* ── NAV ── */
+  nav { padding: 0 1rem; height: 54px; }
+  .nav-logo { font-size: 1.1rem; }
+
+  /* PC用メニューを隠す */
+  .nav-links { display: none !important; }
+
+  /* ハンバーガーボタン表示 */
   .nav-hamburger {
-    display:flex; flex-direction:column; gap:5px;
-    cursor:pointer; padding:6px;
+    display: flex !important;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 6px;
   }
   .nav-hamburger span {
-    display:block; width:22px; height:2px;
-    background:var(--gold); border-radius:2px;
-    transition:all 0.3s;
+    display: block;
+    width: 22px; height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: all 0.3s;
   }
-  .nav-hamburger.open span:nth-child(1){ transform:rotate(45deg) translate(5px,5px); }
-  .nav-hamburger.open span:nth-child(2){ opacity:0; }
-  .nav-hamburger.open span:nth-child(3){ transform:rotate(-45deg) translate(5px,-5px); }
+  .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-  /* HOME */
-  #home { padding-top:54px; }
-  #home > div { padding:2rem 1rem 1.5rem !important; }
+  /* メニューが開いた状態 */
+  .nav-links.open {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    top: 54px; left: 0; right: 0; bottom: 0;
+    background: rgba(6,8,11,0.97);
+    z-index: 199;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+    gap: 0;
+  }
+  .nav-links.open li a {
+    display: block;
+    height: auto;
+    padding: 1rem 0.5rem;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+    border-left: none;
+    color: var(--text);
+  }
+  .nav-links.open li a:hover,
+  .nav-links.open li a.active { color: var(--gold); }
+  .nav-links.open .nav-reserve {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+    height: 50px !important;
+    background: var(--gold);
+    color: #06080b !important;
+    font-size: 1rem !important;
+    border-bottom: none !important;
+    border-radius: 4px;
+    padding: 0 !important;
+  }
 
-  /* ヒーローテキスト */
-  #home h1 { font-size:2.2rem !important; }
-  #home .hero-stats { gap:0.8rem; flex-wrap:wrap; }
-  #home .hero-stats > div {
-    padding:0.6rem 1rem !important;
-    font-size:0.65rem;
-  }
-  #home [style*="font-family:'Bebas Neue';font-size:2.5rem"] { font-size:1.8rem !important; }
-  #home [style*="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:1.8rem"] {
-    gap:0.5rem;
-  }
-  #home [style*="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:1.8rem"] span {
-    font-size:0.75rem; padding:0.3rem 0.8rem;
+  /* ── HOME ── */
+  #home { padding-top: 54px; }
+  #home > div > div { padding: 2rem 1rem 1.5rem !important; }
+  #home h1 { font-size: 2rem !important; }
+
+  /* ビリヤード詳細グリッド → 1列 */
+  .billiard-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  #home [style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
   }
 
   /* スライドショー */
-  .billiard-slideshow-wrap { padding:0 1rem 2rem; }
-  .slide-label { font-size:0.9rem; }
+  .billiard-slideshow-wrap { padding: 0 1rem 2rem; }
 
-  /* 詳細グリッド（料金表＋地図）→縦1列 */
-  .billiard-grid { grid-template-columns:1fr !important; gap:1.5rem !important; }
-  #home [style*="display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem"] {
-    grid-template-columns:1fr !important; gap:1.5rem !important;
+  /* ── GOLF ── */
+  #golf > div { padding: 4rem 1rem !important; }
+  .golf-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+  .equipment-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* ── MAHJONG ── */
+  #mahjong > div { padding: 4rem 1rem !important; }
+  .mahjong-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+  .mahjong-concept { grid-template-columns: 1fr !important; }
+
+  /* ── EVENTS ── */
+  #events > div { padding: 4rem 1rem !important; }
+  .event-grid { grid-template-columns: 1fr !important; }
+
+  /* ── ギャラリー＆予約 → 確実に1列 ── */
+  #gallery > div { padding: 4rem 1rem !important; }
+  .gallery-res-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
   }
-
-  /* ゴルフ */
-  #golf > div { padding:4rem 1rem !important; }
-  .golf-grid { grid-template-columns:1fr !important; gap:2rem !important; }
-  .equipment-grid { grid-template-columns:1fr 1fr !important; gap:0.8rem; }
-  .equip-card { padding:1rem; }
-
-  /* 麻雀 */
-  #mahjong > div { padding:4rem 1rem !important; }
-  .mahjong-grid { grid-template-columns:1fr !important; gap:2rem !important; }
-  .mahjong-concept { grid-template-columns:1fr !important; gap:1rem; }
-
-  /* イベント */
-  #events > div { padding:4rem 1rem !important; }
-  .event-grid { grid-template-columns:1fr !important; }
-  .entry-methods { grid-template-columns:1fr !important; }
-
-  /* ギャラリー＆予約 — 確実に1列 */
-  #gallery > div { padding:4rem 1rem !important; }
-  #galleryResGrid,
-  #gallery [style*="grid-template-columns:1fr 1fr"],
-  #gallery [style*="grid-template-columns: 1fr 1fr"] {
-    grid-template-columns:1fr !important;
-    gap:1.5rem !important;
-  }
-  /* 予約フォームのsticky解除 */
-  #gallery [style*="position:sticky"],
-  #resFormWrap { position:static !important; top:auto !important; }
+  /* sticky解除 */
+  #resFormWrap { position: static !important; top: auto !important; }
 
   /* エリア図 */
-  .area-map { aspect-ratio:1/1; min-height:280px; }
-  .zone-billiard { top:4%; left:2%; width:58%; height:52%; }
-  .zone-golf     { top:4%; left:64%; width:34%; height:38%; }
-  .zone-mahjong  { top:47%; left:64%; width:34%; height:32%; }
-  .zone-entrance { top:61%; left:2%; width:58%; height:20%; }
-  .area-zone-label { font-size:0.55rem; }
-  .area-zone-sub   { display:none; }
-  .area-zone > div:first-child { font-size:1.4rem; }
+  .area-map { aspect-ratio: 1/1; min-height: 260px; }
+  .zone-billiard { top: 4%; left: 2%; width: 57%; height: 50%; }
+  .zone-golf     { top: 4%; left: 63%; width: 33%; height: 36%; }
+  .zone-mahjong  { top: 45%; left: 63%; width: 33%; height: 30%; }
+  .zone-entrance { top: 60%; left: 2%; width: 57%; height: 20%; }
+  .area-zone-label { font-size: 0.52rem; }
+  .area-zone-sub   { display: none; }
 
-  /* ミニスライド */
-  .gallery-mini-slides { gap:0.3rem; }
-  .mini-slide { width:80px; height:55px; }
+  /* ミニ写真 */
+  .mini-slide { width: 80px; height: 55px; }
 
-  /* 予約フォーム内グリッド */
+  /* 予約フォーム */
   #resPanel [style*="grid-template-columns:1fr 1fr"] {
-    grid-template-columns:1fr !important; gap:0 !important;
+    grid-template-columns: 1fr !important;
   }
-  #tableGrid { grid-template-columns:repeat(6,1fr) !important; gap:3px !important; }
-  #tableGrid button { padding:0.3rem 0; font-size:0.65rem; }
+  #tableGrid { grid-template-columns: repeat(6, 1fr) !important; }
 
-  /* テーブル */
-  .price-table { font-size:0.78rem; }
-  .price-table td, .price-table th { padding:0.45rem 0.5rem; }
-
-  /* アクセス */
-  .access-icon { width:34px; height:34px; font-size:0.95rem; }
-  .access-text span { font-size:0.78rem; }
-
-  /* ミュージックプレーヤー */
-  .music-player { flex-wrap:wrap; gap:0.8rem; padding:0.7rem 1rem; }
-  .music-title { font-size:0.75rem; }
-  .music-sub { font-size:0.65rem; }
+  /* 価格テーブル */
+  .price-table { font-size: 0.78rem; }
+  .price-table td, .price-table th { padding: 0.45rem 0.5rem; }
 
   /* フッター */
-  footer { padding:3rem 1rem 2rem; }
-  .footer-inner { grid-template-columns:1fr !important; gap:2rem !important; }
-  .footer-bottom { flex-direction:column; gap:0.4rem; text-align:center; padding:1.5rem 1rem; }
-  .footer-logo { font-size:1.2rem; }
+  footer { padding: 3rem 1rem 2rem; }
+  .footer-inner { grid-template-columns: 1fr !important; gap: 2rem !important; }
+  .footer-bottom { flex-direction: column; gap: 0.4rem; text-align: center; }
 
   /* ボタン */
-  .btn-primary { padding:0.8rem 1.5rem; font-size:0.85rem; }
-  .btn-ghost   { padding:0.8rem 1.2rem; font-size:0.82rem; }
-
-  /* スライドショーの矢印 */
-  .slide-arrow { width:30px; height:30px; font-size:1.1rem; }
+  .btn-primary { padding: 0.8rem 1.5rem; font-size: 0.85rem; }
 }
 
-@media (max-width:400px){
-  #home h1 { font-size:1.8rem !important; }
-  .equipment-grid { grid-template-columns:1fr !important; }
-  .hero-stats > div { padding:0.5rem 0.8rem !important; }
+@media (max-width: 400px) {
+  #home h1 { font-size: 1.7rem !important; }
+  .equipment-grid { grid-template-columns: 1fr !important; }
 }
 
 </style>
@@ -837,7 +836,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
     </div>
 
     <div class="reveal">
-      <div id="galleryResGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+      <div id="galleryResGrid" class="gallery-res-grid">
 
         <!-- LEFT: エリア図 + 写真 + BGM -->
         <div>
@@ -1425,34 +1424,13 @@ function closeNav(){
   nav.classList.remove('open');
   hbg.classList.remove('open');
 }
-// ハンバーガーをモバイルのみ表示
-(function(){
-  function checkMobile(){
-    var hbg = document.getElementById('hamburger');
-    if(!hbg) return;
-    hbg.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
-  }
-  window.addEventListener('DOMContentLoaded', checkMobile);
-  window.addEventListener('resize', checkMobile);
-})();
 
 </script>
 
 </head>
 <body>
 
-<!-- NAV -->
-<nav id="mainNav">
-  <a href="#home" class="nav-logo">PALACE <span>CLUB</span></a>
-  <ul class="nav-links">
-    <li><a href="#home" class="active" onclick="setActive(this)">🎱 ビリヤード</a></li>
-    <li><a href="#golf"    onclick="setActive(this)">⛳ ゴルフ</a></li>
-    <li><a href="#mahjong" onclick="setActive(this)">🀄 麻雀</a></li>
-    <li><a href="#gallery" onclick="setActive(this)">🖼 ギャラリー</a></li>
-    <li><a href="#events"  onclick="setActive(this)">🏆 イベント</a></li>
-    <li><a href="#gallery" class="nav-reserve" onclick="setActive(this)">予約する</a></li>
-  </ul>
-</nav>
+
 
 <div class="toast" id="toast"></div>
 
