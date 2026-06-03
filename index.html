@@ -424,34 +424,40 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
     flex-direction: column;
     position: fixed;
     top: 54px; left: 0; right: 0; bottom: 0;
-    background: rgba(6,8,11,0.97);
+    background: rgba(6,8,11,0.98);
     z-index: 199;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
     overflow-y: auto;
     gap: 0;
   }
+  /* ← height:62px と color:var(--muted) を上書き */
+  .nav-links.open li { list-style: none; }
   .nav-links.open li a {
-    display: block;
-    height: auto;
-    padding: 1rem 0.5rem;
-    font-size: 1rem;
-    border-bottom: 1px solid rgba(201,168,76,0.12);
-    border-left: none;
-    color: var(--text);
+    display: block !important;
+    height: auto !important;
+    padding: 1.1rem 1rem !important;
+    font-size: 1rem !important;
+    color: #f0ece4 !important;
+    letter-spacing: 0.05em !important;
+    border-bottom: 1px solid rgba(201,168,76,0.15) !important;
+    border-left: none !important;
+    border-top: none !important;
+    background: transparent !important;
+    text-decoration: none !important;
   }
   .nav-links.open li a:hover,
-  .nav-links.open li a.active { color: var(--gold); }
+  .nav-links.open li a.active { color: var(--gold) !important; }
   .nav-links.open .nav-reserve {
     display: flex !important;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1.5rem;
-    height: 50px !important;
-    background: var(--gold);
+    align-items: center !important;
+    justify-content: center !important;
+    margin-top: 1.5rem !important;
+    height: 52px !important;
+    background: var(--gold) !important;
     color: #06080b !important;
     font-size: 1rem !important;
-    border-bottom: none !important;
-    border-radius: 4px;
+    border: none !important;
+    border-radius: 4px !important;
     padding: 0 !important;
   }
 
@@ -493,14 +499,22 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   /* sticky解除 */
   #resFormWrap { position: static !important; top: auto !important; }
 
-  /* エリア図 */
-  .area-map { aspect-ratio: 1/1; min-height: 260px; }
-  .zone-billiard { top: 4%; left: 2%; width: 57%; height: 50%; }
-  .zone-golf     { top: 4%; left: 63%; width: 33%; height: 36%; }
-  .zone-mahjong  { top: 45%; left: 63%; width: 33%; height: 30%; }
-  .zone-entrance { top: 60%; left: 2%; width: 57%; height: 20%; }
-  .area-zone-label { font-size: 0.52rem; }
+  /* エリア図 — 全幅・コンパクト・他ページと同じ幅 */
+  .area-map {
+    width: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 4/3 !important;
+    min-height: unset !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .zone-billiard { top: 8%; left: 3%; width: 55%; height: 52%; }
+  .zone-golf     { top: 8%; left: 62%; width: 34%; height: 38%; }
+  .zone-mahjong  { top: 52%; left: 62%; width: 34%; height: 30%; }
+  .zone-entrance { top: 68%; left: 3%; width: 55%; height: 18%; }
+  .area-zone-label { font-size: 0.58rem; }
   .area-zone-sub   { display: none; }
+  .area-zone > div:first-child { font-size: 1.3rem; }
 
   /* ミニ写真 */
   .mini-slide { width: 80px; height: 55px; }
