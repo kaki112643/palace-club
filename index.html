@@ -248,7 +248,13 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
 
   /* ── SECTIONS ── */
   #home{padding-top:54px}
-  section > div{padding:3rem 16px!important;max-width:100%!important;box-sizing:border-box!important}
+  section{overflow:hidden!important;width:100vw!important;max-width:100vw!important;box-sizing:border-box!important}
+  section > div{padding:3rem 16px!important;max-width:100%!important;box-sizing:border-box!important;overflow:hidden!important}
+
+  /* ── AREA MAP: 確実に画面内に収める ── */
+  #gallery,#gallery>div,#gallery .gr-grid,#gallery .gr-grid>div{
+    width:100%!important;max-width:100%!important;overflow:hidden!important;box-sizing:border-box!important
+  }
 
   /* ── ALL 2-COL GRIDS → 1COL ── */
   .golf-grid,.mj-grid,.gr-grid,.mj-concept,.ev-grid,.ft-inner{grid-template-columns:1fr!important;gap:1.5rem!important}
@@ -257,13 +263,38 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   [style*="position:sticky"]{position:static!important}
   .res-row{grid-template-columns:1fr!important}
 
+  /* ── GALLERY: スマホではエリア図の下に予約フォームを常に表示 ── */
+  .gr-grid{grid-template-columns:1fr!important;gap:1.5rem!important}
+  #resPh{display:none!important}
+  #resPanel{
+    display:block!important;
+    border:1px solid rgba(201,168,76,0.25)!important;
+    background:rgba(10,12,16,0.85)!important;
+    margin-top:1rem!important
+  }
+  /* ── GALLERY SECTION ── */
+  .gallery-inner{padding:3rem 0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+  #gallery .gr-grid{padding:0 16px!important;box-sizing:border-box!important;width:100%!important}
+  #gallery .gr-grid > div{width:100%!important;min-width:0!important;overflow:hidden!important}
+
   /* ── AREA MAP ── */
-  .area-map{width:100%!important;max-width:100%!important;aspect-ratio:4/3!important;min-height:unset!important;overflow:hidden!important}
+  .area-map{
+    width:100%!important;
+    max-width:100%!important;
+    aspect-ratio:4/3!important;
+    min-height:unset!important;
+    overflow:hidden!important;
+    margin-left:0!important;
+    margin-right:0!important
+  }
   .z-bill{top:8%;left:3%;width:54%;height:50%}
   .z-golf{top:8%;left:61%;width:35%;height:36%}
   .z-mj{top:51%;left:61%;width:35%;height:30%}
   .z-ent{top:65%;left:3%;width:54%;height:20%}
   .az-lbl{font-size:0.6rem}.az-sub{display:none}
+
+  /* ── 予約フォーム ── */
+  .res-ph,.res-panel{margin-top:1rem!important;width:100%!important;box-sizing:border-box!important}
 
   /* ── MISC ── */
   .mini-slide{width:80px;height:55px}
@@ -486,8 +517,8 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
 </section>
 
 <!-- GALLERY + RESERVATION -->
-<section id="gallery">
-  <div style="max-width:1280px;margin:0 auto;padding:6rem 2rem">
+<section id="gallery" style="overflow:hidden">
+  <div class="gallery-inner" style="max-width:1280px;margin:0 auto;padding:6rem 2rem;box-sizing:border-box;width:100%">
     <div style="text-align:center;margin-bottom:2.5rem" class="reveal">
       <div class="sec-label">Gallery &amp; Reservation</div>
       <h2 class="sec-title" style="text-align:center">店内エリア図<em> &amp; ご予約</em></h2>
@@ -735,6 +766,13 @@ function openForm(zone,label){
   var ts=document.getElementById('tblSel'),si=document.getElementById('selInfo');
   if(zone==='billiard'){ts.style.display='block';buildTbl();}
   else{ts.style.display='none';if(si)si.style.display='none';}
+  // スマホでフォームまで自動スクロール
+  setTimeout(function(){
+    var panel=document.getElementById('resPanel');
+    if(panel && window.innerWidth<=768){
+      panel.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  },100);
 }
 function closeForm(){document.getElementById('resPanel').style.display='none';document.getElementById('resPh').style.display='block';}
 function buildTbl(){
