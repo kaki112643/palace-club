@@ -296,7 +296,27 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   /* ── 予約フォーム ── */
   .res-ph,.res-panel{margin-top:1rem!important;width:100%!important;box-sizing:border-box!important}
 
-  /* ── MISC ── */
+  /* ── スマホ: 予約フォームを下部から表示 ── */
+  .res-ph{padding:2rem 1rem}
+  #resPanel{
+    position:fixed!important;
+    bottom:0!important;
+    left:0!important;
+    right:0!important;
+    width:100%!important;
+    max-height:80vh!important;
+    overflow-y:auto!important;
+    z-index:1000!important;
+    border-top:2px solid var(--gold)!important;
+    border-left:none!important;
+    border-right:none!important;
+    background:#0d0f12!important;
+    display:none
+  }
+  #resPanel.open-mobile{display:block!important}
+  /* 予約パネル表示中の背景オーバーレイ */
+  #resOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999}
+  #resOverlay.show{display:block}
   .mini-slide{width:80px;height:55px}
   .ptbl{font-size:0.8rem}.ptbl td,.ptbl th{padding:0.5rem}
   footer{padding:3rem 16px 2rem}
@@ -659,6 +679,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   </div>
 </footer>
 
+<div id="resOverlay" onclick="closeForm()"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -757,8 +778,10 @@ var curZone='',curTbl='';
 function openForm(zone,label){
   curZone=zone;curTbl='';
   showPhotos(zone==='entrance'?'billiard':zone);
-  document.getElementById('resPh').style.display='none';
-  document.getElementById('resPanel').style.display='block';
+  var ph=document.getElementById('resPh');
+  var panel=document.getElementById('resPanel');
+  var overlay=document.getElementById('resOverlay');
+  if(!panel)return;
   document.getElementById('resPanelTitle').textContent=label;
   document.getElementById('resConf').style.display='none';
   var today=new Date().toISOString().split('T')[0];
@@ -766,15 +789,25 @@ function openForm(zone,label){
   var ts=document.getElementById('tblSel'),si=document.getElementById('selInfo');
   if(zone==='billiard'){ts.style.display='block';buildTbl();}
   else{ts.style.display='none';if(si)si.style.display='none';}
-  // スマホでフォームまで自動スクロール
-  setTimeout(function(){
-    var panel=document.getElementById('resPanel');
-    if(panel && window.innerWidth<=768){
-      panel.scrollIntoView({behavior:'smooth',block:'start'});
-    }
-  },100);
+
+  if(window.innerWidth<=768){
+    // スマホ: 下から出るシート
+    panel.classList.add('open-mobile');
+    if(overlay)overlay.classList.add('show');
+  } else {
+    // PC: 右カラムに表示
+    if(ph)ph.style.display='none';
+    panel.style.display='block';
+  }
 }
-function closeForm(){document.getElementById('resPanel').style.display='none';document.getElementById('resPh').style.display='block';}
+function closeForm(){
+  var ph=document.getElementById('resPh');
+  var panel=document.getElementById('resPanel');
+  var overlay=document.getElementById('resOverlay');
+  if(panel){panel.classList.remove('open-mobile');panel.style.display='none';}
+  if(overlay)overlay.classList.remove('show');
+  if(ph)ph.style.display='block';
+}
 function buildTbl(){
   var g=document.getElementById('tblGrid');if(!g)return;g.innerHTML='';
   var occ=[3,7,11];
