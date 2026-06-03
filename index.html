@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PALACE CLUB — 高田馬場 ビリヤード・ゴルフ・麻雀</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --gold:#c9a84c;--gold2:#e8c97a;
+  --dark:#06080b;--card:#101820;
+  --text:#f0ece4;--muted:#7a8a9a;
+  --green2:#22c55e;--red:#c0392b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden}
+
+/* ===== NAV ===== */
+nav{
+  position:fixed;top:0;width:100%;z-index:200;
+  padding:0 2rem;
+  background:rgba(6,8,11,0.95);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(201,168,76,0.18);
+  display:flex;align-items:center;justify-content:space-between;
+  height:62px;
+}
+.nav-logo{font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:0.25em;color:var(--gold);text-decoration:none}
+.nav-logo span{color:var(--text)}
+.nav-links{display:flex;gap:0;list-style:none}
+.nav-links a{
+  display:flex;align-items:center;gap:0.4rem;
+  color:var(--muted);text-decoration:none;
+  font-size:0.78rem;letter-spacing:0.08em;
+  padding:0 1rem;height:62px;
+  border-bottom:2px solid transparent;
+  transition:all 0.25s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);border-bottom-color:var(--gold)}
+.nav-reserve{
+  background:var(--gold);color:#06080b!important;
+  font-weight:700;border-radius:2px;
+  height:36px!important;padding:0 1.2rem!important;
+  border-bottom:none!important;margin-left:0.8rem;
+}
+.nav-reserve:hover{background:var(--gold2)!important}
+
+/* ===== BUTTONS ===== */
+.btn-primary{
+  background:var(--gold);color:#06080b;
+  padding:0.85rem 2.2rem;font-weight:700;font-size:0.88rem;
+  letter-spacing:0.15em;border:none;cursor:pointer;
+  transition:all 0.3s;text-decoration:none;display:inline-block;
+}
+.btn-primary:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn-ghost{
+  border:1px solid rgba(201,168,76,0.5);color:var(--gold);
+  padding:0.85rem 2rem;font-size:0.85rem;
+  letter-spacing:0.1em;cursor:pointer;transition:all 0.3s;
+  text-decoration:none;display:inline-block;background:transparent;
+}
+.btn-ghost:hover{border-color:var(--gold);background:rgba(201,168,76,0.08)}
+
+/* ===== SHARED SECTION STYLES ===== */
+.sec-label{font-size:0.65rem;letter-spacing:0.4em;color:var(--gold);margin-bottom:0.8rem;text-transform:uppercase}
+.sec-title{font-family:'Playfair Display';font-size:clamp(1.8rem,4vw,3rem);line-height:1.2;margin-bottom:1rem}
+.sec-title em{font-style:italic;color:var(--gold)}
+.divider{width:50px;height:2px;background:var(--gold);margin:1.2rem 0 2rem}
+.reveal{opacity:0;transform:translateY(20px);transition:all 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+/* Fallback: sections without scroll trigger show immediately */
+#golf .reveal, #mahjong .reveal{opacity:1;transform:none}
+
+/* ===== PRICE TABLE ===== */
+.price-table{width:100%;border-collapse:collapse;margin-top:1.5rem}
+.price-table th{background:rgba(201,168,76,0.1);color:var(--gold);padding:0.7rem 1rem;text-align:left;font-size:0.78rem;letter-spacing:0.1em;border-bottom:1px solid rgba(201,168,76,0.3)}
+.price-table td{padding:0.7rem 1rem;font-size:0.85rem;border-bottom:1px solid rgba(255,255,255,0.05)}
+.price-table tr:hover td{background:rgba(255,255,255,0.02)}
+.highlight-price{color:var(--gold);font-weight:700;font-family:'Bebas Neue';font-size:1.2rem}
+
+/* ===== ACCESS ===== */
+.access-items{display:flex;flex-direction:column;gap:1.5rem}
+.access-item{display:flex;gap:1rem;align-items:flex-start}
+.access-icon{width:40px;height:40px;border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.access-text strong{display:block;color:var(--gold);font-size:0.75rem;letter-spacing:0.1em;margin-bottom:0.3rem}
+.access-text span{font-size:0.85rem;color:var(--muted);line-height:1.7}
+
+/* ===== SLIDESHOW — HORIZONTAL ===== */
+.slideshow{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(201,168,76,0.25);
+  background:#0a0c10;
+}
+.slide-track{
+  display:flex;height:100%;
+  transition:transform 0.55s cubic-bezier(0.77,0,0.18,1);
+  will-change:transform;
+}
+.slide{
+  flex:0 0 100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:1rem;
+  font-size:4.5rem;position:relative;overflow:hidden;
+}
+.slide-label{
+  font-family:'Bebas Neue';font-size:1.3rem;
+  color:var(--gold);letter-spacing:0.2em;
+  position:relative;z-index:2;
+}
+.slide-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(0,0,0,0.55);border:1px solid rgba(201,168,76,0.35);
+  color:var(--gold);font-size:1.4rem;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:5;transition:all 0.2s;user-select:none;line-height:1;
+}
+.slide-arrow:hover{background:rgba(201,168,76,0.25);border-color:var(--gold)}
+.slide-prev{left:0.5rem}
+.slide-next{right:0.5rem}
+.slide-dots{
+  position:absolute;bottom:0.8rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:0.45rem;z-index:5;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(201,168,76,0.3);cursor:pointer;transition:all 0.3s}
+.dot.active{background:var(--gold);transform:scale(1.35)}
+.slide-counter{
+  position:absolute;top:0.7rem;right:0.7rem;
+  background:rgba(0,0,0,0.65);color:var(--gold);
+  font-size:0.72rem;padding:0.25rem 0.6rem;
+  font-family:'Bebas Neue';letter-spacing:0.1em;z-index:5;
+}
+
+/* Luxury billiard slide palette — deep, rich, elegant */
+.sc0{background:linear-gradient(150deg,#0d0a05,#2a1f08)}
+.sc1{background:linear-gradient(150deg,#050a14,#0d1f38)}
+.sc2{background:linear-gradient(150deg,#140505,#2e0e0e)}
+.sc3{background:linear-gradient(150deg,#06080a,#101828)}
+.sc4{background:linear-gradient(150deg,#0a0805,#201808)}
+.sc5{background:linear-gradient(150deg,#08050a,#180e22)}
+.sc6{background:linear-gradient(150deg,#050a08,#0e1e14)}
+.sc7{background:linear-gradient(150deg,#0a0a05,#1e1e08)}
+.sc8{background:linear-gradient(150deg,#0a0505,#200808)}
+.sc9{background:linear-gradient(150deg,#050808,#0e1818)}
+
+/* golf slides */
+.sg0{background:linear-gradient(135deg,#041a08,#0a3a14)}
+.sg1{background:linear-gradient(135deg,#0a1a04,#1a3a08)}
+.sg2{background:linear-gradient(135deg,#04140a,#082a14)}
+.sg3{background:linear-gradient(135deg,#0a1808,#143010)}
+.sg4{background:linear-gradient(135deg,#041008,#0a2010)}
+
+/* mahjong slides */
+.sm0{background:linear-gradient(135deg,#041520,#083040)}
+.sm1{background:linear-gradient(135deg,#100430,#200860)}
+.sm2{background:linear-gradient(135deg,#040a20,#081540)}
+.sm3{background:linear-gradient(135deg,#200410,#400820)}
+.sm4{background:linear-gradient(135deg,#041020,#081a35)}
+
+/* ===== BILLIARD PAGE ===== */
+#home{position:relative;padding-top:62px;overflow:hidden;background:#0a0c0f}
+
+/* Luxury background — subtle animated gold shimmer */
+.luxury-bg{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  transition:background 3s ease;
+}
+@keyframes shimmer{
+  0%,100%{opacity:0.6}
+  50%{opacity:1}
+}
+.luxury-particle{
+  position:absolute;border-radius:50%;pointer-events:none;
+  animation:particleDrift linear infinite;
+  opacity:0;
+}
+@keyframes particleDrift{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:0.7}
+  90%{opacity:0.4}
+  100%{transform:translateY(-10vh) scale(1.2);opacity:0}
+}
+
+/* Billiard slideshow container */
+.billiard-slideshow-wrap{
+  position:relative;z-index:2;
+  max-width:1080px;margin:0 auto;
+  padding:0 2rem 3rem;
+}
+.billiard-slideshow-wrap .slideshow{aspect-ratio:16/7}
+
+/* Map + details */
+.billiard-detail{
+  position:relative;z-index:2;
+  background:rgba(8,10,14,0.9);
+  backdrop-filter:blur(12px);
+  padding:5rem 2rem;
+  border-top:1px solid rgba(201,168,76,0.15);
+}
+.billiard-grid{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;
+}
+.map-frame{
+  width:100%;aspect-ratio:4/3;
+  background:linear-gradient(135deg,#0d1520,#0a1018);
+  border:1px solid rgba(201,168,76,0.2);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;font-size:3rem;
+}
+.map-frame iframe{
+  width:100%;height:100%;border:none;filter:grayscale(60%) invert(0.9) hue-rotate(180deg);
+}
+
+/* ===== GOLF ===== */
+#golf{background:linear-gradient(180deg,#060c08,#04100a,#060c08);padding:6rem 2rem}
+.golf-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.golf-slideshow .slideshow{aspect-ratio:4/3}
+.equipment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem}
+.equip-card{background:rgba(0,0,0,0.35);border:1px solid rgba(34,197,94,0.15);padding:1.2rem;text-align:center;transition:all 0.3s}
+.equip-card:hover{border-color:rgba(34,197,94,0.4);transform:translateY(-3px)}
+.equip-icon{font-size:2rem;margin-bottom:0.7rem}
+.equip-name{font-size:0.8rem;color:#22c55e;font-weight:600;margin-bottom:0.3rem}
+.equip-desc{font-size:0.72rem;color:var(--muted);line-height:1.6}
+
+/* ===== MAHJONG ===== */
+#mahjong{
+  padding:6rem 2rem;
+  background:
+    linear-gradient(135deg,rgba(8,14,22,0.97),rgba(5,10,18,0.98)),
+    repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(34,197,94,0.025) 20px,rgba(34,197,94,0.025) 40px);
+}
+.mahjong-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.mahjong-slideshow .slideshow{aspect-ratio:4/3;border-color:rgba(34,197,94,0.2)}
+.mahjong-concept{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
+.concept-card{border:1px solid rgba(34,197,94,0.2);padding:1.5rem;background:rgba(0,0,0,0.3);text-align:center}
+.concept-icon{font-size:2.5rem;margin-bottom:1rem}
+.concept-title{font-size:0.9rem;color:#22c55e;margin-bottom:0.5rem;font-weight:600}
+.concept-desc{font-size:0.78rem;color:var(--muted);line-height:1.7}
+
+/* ===== GALLERY ===== */
+#gallery{padding:6rem 2rem;background:#040508}
+.area-map{
+  width:100%;max-width:960px;margin:0 auto;aspect-ratio:16/9;
+  background:linear-gradient(135deg,#0d1a12,#0a1508);
+  border:2px solid rgba(201,168,76,0.3);
+  position:relative;overflow:hidden;cursor:crosshair;
+}
+.area-zone{
+  position:absolute;border:1px solid rgba(255,255,255,0.12);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:0.3rem;
+  cursor:pointer;transition:all 0.3s;text-align:center;
+}
+.area-zone:hover{border-color:var(--gold);background:rgba(201,168,76,0.1)!important}
+.area-zone-label{font-size:0.68rem;color:var(--gold);letter-spacing:0.1em;font-weight:600}
+.area-zone-sub{font-size:0.58rem;color:var(--muted)}
+.zone-billiard{top:10%;left:5%;width:45%;height:55%;background:rgba(26,58,42,0.3)}
+.zone-golf{top:10%;left:55%;width:40%;height:40%;background:rgba(10,50,20,0.3)}
+.zone-mahjong{top:55%;left:55%;width:40%;height:35%;background:rgba(20,10,50,0.3)}
+.zone-entrance{top:70%;left:5%;width:45%;height:20%;background:rgba(30,20,10,0.3)}
+.gallery-photo-viewer{
+  max-width:960px;margin:1.2rem auto 0;
+  background:rgba(16,24,32,0.8);border:1px solid rgba(201,168,76,0.2);padding:1.2rem;
+}
+.gallery-viewer-title{font-size:0.8rem;color:var(--gold);letter-spacing:0.12em;margin-bottom:0.8rem}
+.gallery-mini-slides{display:flex;gap:0.5rem;overflow-x:auto;padding-bottom:0.4rem}
+.mini-slide{
+  width:120px;height:80px;flex-shrink:0;
+  border:2px solid transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:all 0.3s;
+}
+.mini-slide.active{border-color:var(--gold)}
+
+/* Music player */
+.music-player{
+  max-width:960px;margin:1rem auto 0;
+  display:flex;align-items:center;gap:1rem;
+  background:rgba(0,0,0,0.6);border:1px solid rgba(201,168,76,0.2);
+  padding:0.8rem 1.2rem;
+}
+.music-btn{
+  background:var(--gold);color:#06080b;border:none;
+  width:36px;height:36px;border-radius:50%;cursor:pointer;
+  font-size:1rem;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.2s;
+}
+.music-btn:hover{background:var(--gold2)}
+.music-info{flex:1}
+.music-title{font-size:0.8rem;color:var(--text)}
+.music-sub{font-size:0.7rem;color:var(--muted)}
+.music-bar{width:100%;height:3px;background:rgba(255,255,255,0.08);margin-top:0.4rem;overflow:hidden}
+.music-progress{height:100%;background:var(--gold);width:0%;transition:width 0.3s}
+
+/* ===== EVENTS ===== */
+#events{padding:6rem 2rem;background:rgba(16,24,32,0.9)}
+.event-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
+.event-card{background:var(--card);border:1px solid rgba(201,168,76,0.2);overflow:hidden;transition:all 0.3s}
+.event-card:hover{border-color:rgba(201,168,76,0.5);transform:translateY(-4px)}
+.event-header{background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.04));padding:1.5rem;border-bottom:1px solid rgba(201,168,76,0.12)}
+.event-type{font-size:0.63rem;letter-spacing:0.2em;color:var(--gold);margin-bottom:0.5rem}
+.event-name{font-family:'Playfair Display';font-size:1.25rem;line-height:1.3}
+.event-body{padding:1.5rem}
+.event-meta{display:flex;flex-direction:column;gap:0.45rem;margin-bottom:1.3rem}
+.event-meta-item{display:flex;gap:0.5rem;font-size:0.78rem;color:var(--muted)}
+.event-meta-item span:first-child{color:var(--gold);width:70px;flex-shrink:0}
+.entry-methods{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
+.entry-method{border:1px solid rgba(255,255,255,0.1);padding:1rem;text-align:center;cursor:pointer;transition:all 0.3s}
+.entry-method:hover{border-color:var(--gold);background:rgba(201,168,76,0.05)}
+.entry-method-icon{font-size:1.5rem;margin-bottom:0.5rem}
+.entry-method-label{font-size:0.7rem;color:var(--muted);line-height:1.5}
+.qr-box{width:80px;height:80px;margin:0.5rem auto 0;background:#fff;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.entry-form{margin-top:1rem}
+.entry-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:0.6rem 0.8rem;font-family:'Noto Sans JP';font-size:0.82rem;margin-bottom:0.5rem;outline:none}
+.entry-input:focus{border-color:var(--gold)}
+.btn-entry{width:100%;background:var(--gold);color:#06080b;padding:0.7rem;font-weight:700;font-size:0.82rem;border:none;cursor:pointer;letter-spacing:0.1em;transition:all 0.3s}
+.btn-entry:hover{background:var(--gold2)}
+
+/* ===== RESERVATION ===== */
+#reservation{background:rgba(16,24,32,0.95);padding:6rem 2rem}
+.res-area-map{
+  width:100%;aspect-ratio:16/9;max-width:900px;margin:2rem auto;
+  background:linear-gradient(135deg,#0d1a12,#0a1508);
+  border:2px solid rgba(201,168,76,0.3);position:relative;
+  cursor:pointer;overflow:hidden;
+}
+.res-zone{
+  position:absolute;border:2px solid transparent;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:0.3rem;cursor:pointer;
+  text-align:center;transition:all 0.3s;
+}
+.res-zone:hover,.res-zone.selected{border-color:var(--gold)!important;background:rgba(201,168,76,0.12)!important}
+.res-zone-label{font-size:0.72rem;color:var(--gold);letter-spacing:0.08em;font-weight:700}
+.res-zone-status{font-size:0.6rem}
+.seat-dot{
+  position:absolute;width:18px;height:18px;border-radius:50%;
+  border:2px solid var(--gold);background:rgba(201,168,76,0.2);
+  cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;
+  font-size:0.5rem;color:var(--gold);
+}
+.seat-dot:hover,.seat-dot.selected{background:var(--gold);color:#06080b}
+.seat-dot.occupied{border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.1);color:rgba(239,68,68,0.5);cursor:not-allowed}
+.res-panel{max-width:500px;margin:2rem auto;background:var(--card);border:1px solid rgba(201,168,76,0.2);padding:2rem;display:none}
+.res-panel.show{display:block}
+.res-panel-title{font-family:'Playfair Display';font-size:1.3rem;margin-bottom:1.5rem;color:var(--gold)}
+.res-field{margin-bottom:1rem}
+.res-label{font-size:0.7rem;letter-spacing:0.12em;color:var(--gold);display:block;margin-bottom:0.4rem}
+.res-input,.res-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:0.7rem 1rem;font-family:'Noto Sans JP';font-size:0.85rem;outline:none}
+.res-input:focus,.res-select:focus{border-color:var(--gold)}
+.qr-result{text-align:center;padding:2rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);margin-top:1.5rem;display:none}
+.qr-result.show{display:block}
+.qr-big{width:160px;height:160px;background:#fff;margin:1rem auto;display:flex;align-items:center;justify-content:center;font-size:5rem}
+.qr-inst{font-size:0.8rem;color:var(--muted);line-height:1.8;margin-top:1rem}
+
+/* ===== FOOTER ===== */
+footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4rem 2rem 2rem}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem}
+.footer-logo{font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:0.25em;color:var(--gold);display:block;margin-bottom:0.8rem;text-decoration:none}
+.footer-logo span{color:var(--text)}
+.footer-desc{font-size:0.8rem;color:var(--muted);line-height:1.8}
+.footer-heading{font-size:0.63rem;letter-spacing:0.25em;color:var(--gold);margin-bottom:1rem;text-transform:uppercase}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:0.6rem}
+.footer-links a{font-size:0.82rem;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.footer-links a:hover{color:var(--gold)}
+.footer-bottom{max-width:1200px;margin:3rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;font-size:0.7rem;color:rgba(138,155,170,0.4)}
+
+/* Toast */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:500;background:var(--green2);color:#fff;padding:0.8rem 1.5rem;font-size:0.85rem;transform:translateY(100px);opacity:0;transition:all 0.4s}
+.toast.show{transform:translateY(0);opacity:1}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#home" class="nav-logo">PALACE <span>CLUB</span></a>
+  <ul class="nav-links">
+    <li><a href="#home" class="active" onclick="setActive(this)">🎱 ビリヤード</a></li>
+    <li><a href="#golf"    onclick="setActive(this)">⛳ ゴルフ</a></li>
+    <li><a href="#mahjong" onclick="setActive(this)">🀄 麻雀</a></li>
+    <li><a href="#gallery" onclick="setActive(this)">🖼 ギャラリー</a></li>
+    <li><a href="#events"  onclick="setActive(this)">🏆 イベント</a></li>
+    <li><a href="#gallery" class="nav-reserve" onclick="setActive(this)">予約する</a></li>
+  </ul>
+</nav>
+
+<!-- ===================== BILLIARD ===================== -->
+<section id="home">
+
+  <!-- Luxury background layers -->
+  <div class="luxury-bg" id="luxuryBg"></div>
+  <canvas id="luxuryCanvas" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none"></canvas>
+
+  <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3.5rem 2rem 2rem">
+
+    <!-- Eyebrow -->
+    <div style="text-align:center;animation:fadeUp 0.9s ease 0.1s both">
+      <div style="display:inline-block;border:1px solid rgba(201,168,76,0.5);color:var(--gold);padding:0.3rem 2rem;font-size:0.65rem;letter-spacing:0.5em;text-transform:uppercase;margin-bottom:1.5rem">
+        高田馬場 — Tokyo Premier Club
+      </div>
+    </div>
+
+    <!-- Main headline -->
+    <div style="text-align:center;animation:fadeUp 0.9s ease 0.25s both">
+      <div style="font-family:'Bebas Neue';font-size:0.95rem;letter-spacing:0.5em;color:rgba(201,168,76,0.6);margin-bottom:0.4rem">PALACE CLUB</div>
+      <h1 style="font-family:'Playfair Display';font-size:clamp(2.2rem,5.5vw,4.5rem);font-weight:700;line-height:1.15;letter-spacing:0.02em;color:var(--text)">
+        チャイニーズ８専門店<br>
+        <em style="font-style:italic;color:var(--gold);text-shadow:0 0 40px rgba(201,168,76,0.35)">日本最大級 — 高田馬場</em>
+      </h1>
+    </div>
+
+    <!-- Key badges -->
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:1.8rem 0;animation:fadeUp 0.9s ease 0.4s both">
+      <div style="border:1px solid rgba(201,168,76,0.35);padding:0.55rem 1.5rem;font-size:0.78rem;letter-spacing:0.2em;color:var(--gold)">🎱 チャイニーズ８</div>
+      <div style="border:1px solid rgba(201,168,76,0.35);padding:0.55rem 1.5rem;font-size:0.78rem;letter-spacing:0.2em;color:var(--gold)">🗾 日本最大級 17台</div>
+      <div style="border:1px solid rgba(201,168,76,0.35);padding:0.55rem 1.5rem;font-size:0.78rem;letter-spacing:0.2em;color:var(--gold)">📍 高田馬場駅 徒歩2分</div>
+    </div>
+
+    <!-- CTA -->
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.9s ease 0.55s both;margin-bottom:2.5rem">
+      <a href="#reservation" class="btn-primary">ご予約はこちら</a>
+      <a href="#gallery" class="btn-ghost">店内を見る</a>
+    </div>
+
+    <!-- Slideshow — 横スライド 2秒 -->
+    <div class="billiard-slideshow-wrap" style="animation:fadeUp 0.9s ease 0.7s both">
+      <div class="slideshow" id="billSlide">
+        <div class="slide-track" id="billTrack">
+          <div class="slide sc0">
+            <div style="position:absolute;inset:0;background:url() center/cover;opacity:0.08"></div>
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(201,168,76,0.6))">🎱</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:var(--gold);letter-spacing:0.3em;margin-bottom:0.5rem">CHINESE 8 BALL</div>
+              <div style="font-size:0.78rem;color:rgba(201,168,76,0.6);letter-spacing:0.3em">チャイニーズ８ — 17台</div>
+            </div>
+          </div>
+          <div class="slide sc1">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(100,160,255,0.5))">🏆</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:#a8c8ff;letter-spacing:0.3em;margin-bottom:0.5rem">TOURNAMENT</div>
+              <div style="font-size:0.78rem;color:rgba(168,200,255,0.6);letter-spacing:0.3em">定期大会 開催中</div>
+            </div>
+          </div>
+          <div class="slide sc2">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(255,100,100,0.5))">🥃</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:#ffb8b8;letter-spacing:0.3em;margin-bottom:0.5rem">BAR LOUNGE</div>
+              <div style="font-size:0.78rem;color:rgba(255,184,184,0.6);letter-spacing:0.3em">上質なドリンクを</div>
+            </div>
+          </div>
+          <div class="slide sc3">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(201,168,76,0.6))">💎</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:var(--gold);letter-spacing:0.3em;margin-bottom:0.5rem">VIP ROOM</div>
+              <div style="font-size:0.78rem;color:rgba(201,168,76,0.6);letter-spacing:0.3em">完全個室 完備</div>
+            </div>
+          </div>
+          <div class="slide sc4">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(180,140,255,0.5))">⛳</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:#d4b8ff;letter-spacing:0.3em;margin-bottom:0.5rem">GOLF SIMULATOR</div>
+              <div style="font-size:0.78rem;color:rgba(212,184,255,0.6);letter-spacing:0.3em">室内ゴルフ練習場</div>
+            </div>
+          </div>
+          <div class="slide sc5">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(100,220,180,0.5))">🀄</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:#88e8cc;letter-spacing:0.3em;margin-bottom:0.5rem">MAHJONG CLUB</div>
+              <div style="font-size:0.78rem;color:rgba(136,232,204,0.6);letter-spacing:0.3em">優雅な麻雀空間</div>
+            </div>
+          </div>
+          <div class="slide sc6">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(201,168,76,0.6))">🌙</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:var(--gold);letter-spacing:0.3em;margin-bottom:0.5rem">NIGHT SESSION</div>
+              <div style="font-size:0.78rem;color:rgba(201,168,76,0.6);letter-spacing:0.3em">土日祝 朝5時まで</div>
+            </div>
+          </div>
+          <div class="slide sc7">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(200,220,255,0.5))">🏙</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:#c8dcff;letter-spacing:0.3em;margin-bottom:0.5rem">TAKADANOBABA</div>
+              <div style="font-size:0.78rem;color:rgba(200,220,255,0.6);letter-spacing:0.3em">高田馬場駅 徒歩2分</div>
+            </div>
+          </div>
+          <div class="slide sc8">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(255,200,100,0.5))">🎯</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:#ffd888;letter-spacing:0.3em;margin-bottom:0.5rem">PRACTICE AREA</div>
+              <div style="font-size:0.78rem;color:rgba(255,216,136,0.6);letter-spacing:0.3em">充実の練習設備</div>
+            </div>
+          </div>
+          <div class="slide sc9">
+            <div style="position:relative;z-index:2;text-align:center;padding:2rem">
+              <div style="font-size:3.5rem;margin-bottom:1rem;filter:drop-shadow(0 0 20px rgba(180,255,220,0.5))">✨</div>
+              <div style="font-family:'Bebas Neue';font-size:2rem;color:#b4ffdc;letter-spacing:0.3em;margin-bottom:0.5rem">MEMBER'S CLUB</div>
+              <div style="font-size:0.78rem;color:rgba(180,255,220,0.6);letter-spacing:0.3em">会員限定 特典多数</div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-arrow slide-prev" onclick="slidePrev('bill')">&#8249;</div>
+        <div class="slide-arrow slide-next" onclick="slideNext('bill')">&#8250;</div>
+        <div class="slide-counter" id="billCounter">1 / 10</div>
+        <div class="slide-dots" id="billDots"></div>
+      </div>
+    </div><!-- /slideshow wrap -->
+
+    <!-- Details + Map -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem;align-items:start" class="reveal">
+
+      <!-- Left: info + price -->
+      <div style="border:1px solid rgba(201,168,76,0.2);padding:2.5rem;background:rgba(10,12,16,0.7);backdrop-filter:blur(12px)">
+        <div class="sec-label">Billiard Club</div>
+        <h2 class="sec-title" style="font-size:1.6rem">チャイニーズ８専門店<br><em>日本最大級 17台</em></h2>
+        <div class="divider"></div>
+        <p style="color:var(--muted);font-size:0.88rem;line-height:1.95;margin-bottom:2rem">
+          高田馬場という都心の好立地に、チャイニーズ８専門店として日本最大規模の17台を設置。
+          プロ仕様のテーブルで、初心者からプロまでが楽しめる本格的な空間を提供します。
+        </p>
+        <table class="price-table">
+          <thead><tr><th>プラン</th><th>料金</th><th>備考</th></tr></thead>
+          <tbody>
+            <tr><td>スタンダード</td><td class="highlight-price">¥800</td><td style="color:var(--muted);font-size:0.8rem">/30分</td></tr>
+            <tr><td>1時間パック</td><td class="highlight-price">¥1,400</td><td style="color:var(--muted);font-size:0.8rem">/1時間</td></tr>
+            <tr><td>プレミアム月額</td><td class="highlight-price">¥9,800</td><td style="color:var(--muted);font-size:0.8rem">/月・40時間</td></tr>
+            <tr><td>グループ(2台〜)</td><td class="highlight-price">¥2,800</td><td style="color:var(--muted);font-size:0.8rem">/時間/台</td></tr>
+            <tr><td>学生割引</td><td class="highlight-price">¥600</td><td style="color:var(--muted);font-size:0.8rem">/30分</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Right: map + access -->
+      <div style="border:1px solid rgba(201,168,76,0.2);padding:2.5rem;background:rgba(10,12,16,0.7);backdrop-filter:blur(12px)">
+        <div class="sec-label">Access &amp; Map</div>
+        <div style="width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0a1018,#060c14);border:1px solid rgba(201,168,76,0.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;margin-bottom:1.5rem;position:relative;overflow:hidden">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,168,76,0.05),transparent 70%)"></div>
+          <div style="font-size:2.8rem;position:relative">📍</div>
+          <div style="font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold);letter-spacing:0.2em;position:relative">高田馬場駅 徒歩2分</div>
+          <a href="https://maps.google.com/?q=高田馬場駅" target="_blank" style="font-size:0.72rem;color:var(--muted);border-bottom:1px solid rgba(201,168,76,0.25);text-decoration:none;padding-bottom:2px;position:relative;transition:color 0.2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Googleマップで開く →</a>
+        </div>
+        <div class="access-items">
+          <div class="access-item"><div class="access-icon">📍</div><div class="access-text"><strong>住所</strong><span>東京都新宿区高田馬場X-X-X<br>○○ビル B1F〜3F</span></div></div>
+          <div class="access-item"><div class="access-icon">🚃</div><div class="access-text"><strong>アクセス</strong><span>JR山手線・西武新宿線・東京メトロ東西線<br>「高田馬場駅」徒歩2分</span></div></div>
+          <div class="access-item"><div class="access-icon">🕐</div><div class="access-text"><strong>営業時間</strong><span>平日 13:00〜25:00<br>土日祝 10:00〜翌5:00</span></div></div>
+          <div class="access-item"><div class="access-icon">📞</div><div class="access-text"><strong>電話</strong><span>03-XXXX-XXXX</span></div></div>
+        </div>
+      </div>
+    </div><!-- /grid -->
+
+  </div><!-- /max-width -->
+</section>
+
+<!-- ===================== GOLF ===================== -->
+<section id="golf">
+  <div style="max-width:1200px;margin:0 auto;padding:6rem 2rem">
+    <div class="reveal" style="text-align:center;margin-bottom:4rem">
+      <div class="sec-label">Indoor Golf</div>
+      <h2 class="sec-title" style="text-align:center">室内ゴルフ<em>練習場</em></h2>
+      <div class="divider" style="margin:1.2rem auto 0"></div>
+    </div>
+    <div class="golf-grid reveal">
+      <div class="golf-slideshow">
+        <div class="slideshow" id="golfSlide" style="aspect-ratio:4/3">
+          <div class="slide-track" id="golfTrack">
+            <div class="slide sg0"><span style="font-size:4rem">⛳</span><div class="slide-label">SIMULATOR</div></div>
+            <div class="slide sg1"><span style="font-size:4rem">🏌️</span><div class="slide-label">SWING PRACTICE</div></div>
+            <div class="slide sg2"><span style="font-size:4rem">📊</span><div class="slide-label">SHOT ANALYSIS</div></div>
+            <div class="slide sg3"><span style="font-size:4rem">🎯</span><div class="slide-label">PUTTING GREEN</div></div>
+            <div class="slide sg4"><span style="font-size:4rem">💻</span><div class="slide-label">VIRTUAL COURSE</div></div>
+          </div>
+          <div class="slide-arrow slide-prev" onclick="slidePrev('golf')">&#8249;</div>
+          <div class="slide-arrow slide-next" onclick="slideNext('golf')">&#8250;</div>
+          <div class="slide-counter" id="golfCounter">1 / 5</div>
+          <div class="slide-dots" id="golfDots"></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family:'Playfair Display';font-size:1.5rem;color:var(--gold);margin-bottom:1rem">高品質な練習環境</h3>
+        <p style="font-size:0.85rem;color:var(--muted);line-height:1.9;margin-bottom:1.5rem">最新のゴルフシミュレーターと本格的な練習設備を完備。天候に関係なく、年中快適に練習できます。</p>
+        <table class="price-table">
+          <thead><tr><th>プラン</th><th>料金</th></tr></thead>
+          <tbody>
+            <tr><td>30分パック</td><td class="highlight-price">¥1,200</td></tr>
+            <tr><td>1時間パック</td><td class="highlight-price">¥2,000</td></tr>
+            <tr><td>月額プラン</td><td class="highlight-price">¥15,800<span style="font-size:0.75rem;color:var(--muted)">/月</span></td></tr>
+            <tr><td>レッスン付き</td><td class="highlight-price">¥3,500<span style="font-size:0.75rem;color:var(--muted)">/時間</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <h3 style="font-family:'Playfair Display';font-size:1.3rem;margin:3rem 0 1rem;color:var(--gold)" class="reveal">設備紹介</h3>
+    <div class="equipment-grid reveal">
+      <div class="equip-card"><div class="equip-icon">🖥️</div><div class="equip-name">ゴルフシミュレーター</div><div class="equip-desc">世界100コース以上収録。リアルな映像で本番さながらのプレイ体験</div></div>
+      <div class="equip-card"><div class="equip-icon">📡</div><div class="equip-name">弾道測定器</div><div class="equip-desc">スイングスピード・打ち出し角度・スピン量を精密計測</div></div>
+      <div class="equip-card"><div class="equip-icon">🎯</div><div class="equip-name">パッティングマット</div><div class="equip-desc">本格的な芝感覚のパッティングマット。距離感を養う</div></div>
+      <div class="equip-card"><div class="equip-icon">🏌️</div><div class="equip-name">スイング解析AI</div><div class="equip-desc">AIがスイングを解析。改善ポイントをリアルタイムでアドバイス</div></div>
+      <div class="equip-card"><div class="equip-icon">🎮</div><div class="equip-name">バーチャルコース</div><div class="equip-desc">世界の名コースをVRで体験。臨場感あふれるゴルフを</div></div>
+      <div class="equip-card"><div class="equip-icon">💼</div><div class="equip-name">クラブレンタル</div><div class="equip-desc">各種クラブのレンタルあり。手ぶらで来店OK</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MAHJONG ===================== -->
+<section id="mahjong">
+  <div style="max-width:1200px;margin:0 auto;padding:6rem 2rem">
+    <div class="reveal" style="text-align:center;margin-bottom:4rem">
+      <div class="sec-label" style="color:#22c55e">Mahjong Club</div>
+      <h2 class="sec-title" style="text-align:center">麻雀クラブ<br><em style="color:#22c55e">雅な空間で心を解き放つ</em></h2>
+      <div class="divider" style="margin:1.2rem auto 0;background:#22c55e"></div>
+    </div>
+    <div class="mahjong-grid reveal">
+      <div class="mahjong-slideshow">
+        <div class="slideshow" id="mahjongSlide" style="aspect-ratio:4/3">
+          <div class="slide-track" id="mahjongTrack">
+            <div class="slide sm0"><span style="font-size:4rem">🀄</span><div class="slide-label" style="color:#22c55e">MAHJONG TABLE</div></div>
+            <div class="slide sm1"><span style="font-size:4rem">🍵</span><div class="slide-label" style="color:#22c55e">TEA SERVICE</div></div>
+            <div class="slide sm2"><span style="font-size:4rem">🏮</span><div class="slide-label" style="color:#22c55e">PRIVATE ROOM</div></div>
+            <div class="slide sm3"><span style="font-size:4rem">🌿</span><div class="slide-label" style="color:#22c55e">RELAX SPACE</div></div>
+            <div class="slide sm4"><span style="font-size:4rem">✨</span><div class="slide-label" style="color:#22c55e">NIGHT GAME</div></div>
+          </div>
+          <div class="slide-arrow slide-prev" onclick="slidePrev('mahjong')">&#8249;</div>
+          <div class="slide-arrow slide-next" onclick="slideNext('mahjong')">&#8250;</div>
+          <div class="slide-counter" id="mahjongCounter">1 / 5</div>
+          <div class="slide-dots" id="mahjongDots"></div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:0.9rem;color:var(--muted);line-height:1.9;margin-bottom:2rem">
+          中国の伝統文化が漂う優雅な空間で、日常を忘れてゆったりと麻雀を楽しめます。
+          初心者から上級者まで、誰もが歓迎される和やかな雰囲気の中で、休日の心の安らぎを。
+        </p>
+        <table class="price-table" style="border:1px solid rgba(34,197,94,0.15)">
+          <thead><tr><th style="color:#22c55e;background:rgba(34,197,94,0.08)">プラン</th><th style="color:#22c55e;background:rgba(34,197,94,0.08)">料金</th><th style="color:#22c55e;background:rgba(34,197,94,0.08)">備考</th></tr></thead>
+          <tbody>
+            <tr><td>1時間</td><td class="highlight-price" style="color:#22c55e">¥500</td><td style="color:var(--muted);font-size:0.8rem">/人</td></tr>
+            <tr><td>半荘</td><td class="highlight-price" style="color:#22c55e">¥300</td><td style="color:var(--muted);font-size:0.8rem">/人</td></tr>
+            <tr><td>貸し切りプラン</td><td class="highlight-price" style="color:#22c55e">¥4,000</td><td style="color:var(--muted);font-size:0.8rem">/卓・4時間</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mahjong-concept reveal" style="margin-top:3rem">
+      <div class="concept-card"><div class="concept-icon">🏮</div><div class="concept-title">中国の雰囲気</div><div class="concept-desc">伝統的な中国文化をモチーフにした内装。異国情緒あふれる空間でゲームを楽しむ</div></div>
+      <div class="concept-card"><div class="concept-icon">👥</div><div class="concept-title">誰でも楽しめる</div><div class="concept-desc">初心者向けのルール説明サポートあり。麻雀を初めて楽しむ方も大歓迎</div></div>
+      <div class="concept-card"><div class="concept-icon">🌸</div><div class="concept-title">心の休日</div><div class="concept-desc">日常のストレスを忘れて心を解き放つ場所。友人や仲間と特別な時間を</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EVENTS ===================== -->
+<section id="events" style="padding:6rem 2rem;background:rgba(16,24,32,0.95)">
+  <div style="max-width:1200px;margin:0 auto">
+    <div style="margin-bottom:3rem">
+      <div class="sec-label">Events</div>
+      <h2 class="sec-title">最新<em>イベント情報</em></h2>
+      <div class="divider"></div>
+    </div>
+    <div class="event-grid" id="eventGrid"></div>
+  </div>
+</section>
+
+<!-- ===================== GALLERY + RESERVATION (統合) ===================== -->
+<section id="gallery">
+  <div style="max-width:1280px;margin:0 auto;padding:6rem 2rem">
+
+    <div class="reveal" style="text-align:center;margin-bottom:3rem">
+      <div class="sec-label">Gallery &amp; Reservation</div>
+      <h2 class="sec-title" style="text-align:center">店内エリア図<em> &amp; ご予約</em></h2>
+      <div class="divider" style="margin:1rem auto 0"></div>
+      <p style="color:var(--muted);font-size:0.85rem;margin-top:1rem">エリアをクリックすると写真と予約フォームが右に表示されます</p>
+    </div>
+
+    <div class="reveal">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+
+        <!-- LEFT: エリア図 + 写真 + BGM -->
+        <div>
+          <div class="area-map" id="areaMap">
+            <div style="position:absolute;top:0.5rem;left:50%;transform:translateX(-50%);font-size:0.58rem;color:rgba(201,168,76,0.35);letter-spacing:0.2em;z-index:5">FLOOR MAP — クリックで予約</div>
+            <div class="area-zone zone-billiard"
+                 onmouseenter="showAreaPhotos('billiard')"
+                 onclick="openResForm('billiard','🎱 ビリヤードエリア')">
+              <div style="font-size:2rem">🎱</div>
+              <div class="area-zone-label">BILLIARD</div>
+              <div class="area-zone-sub">17台 — タップで予約</div>
+            </div>
+            <div class="area-zone zone-golf"
+                 onmouseenter="showAreaPhotos('golf')"
+                 onclick="openResForm('golf','⛳ ゴルフエリア')">
+              <div style="font-size:1.8rem">⛳</div>
+              <div class="area-zone-label">GOLF</div>
+              <div class="area-zone-sub">室内練習場</div>
+            </div>
+            <div class="area-zone zone-mahjong"
+                 onmouseenter="showAreaPhotos('mahjong')"
+                 onclick="openResForm('mahjong','🀄 麻雀エリア')">
+              <div style="font-size:1.8rem">🀄</div>
+              <div class="area-zone-label">MAHJONG</div>
+              <div class="area-zone-sub">麻雀クラブ</div>
+            </div>
+            <div class="area-zone zone-entrance" style="background:rgba(201,168,76,0.08)"
+                 onmouseenter="showAreaPhotos('entrance')"
+                 onclick="showAreaPhotos('entrance')">
+              <div style="font-size:1.2rem">🚪</div>
+              <div class="area-zone-label" style="font-size:0.6rem">ENTRANCE / LOUNGE</div>
+            </div>
+          </div>
+
+          <div class="gallery-photo-viewer" id="photoViewer" style="margin-top:0.8rem">
+            <div class="gallery-viewer-title" id="viewerTitle">🎱 ビリヤードエリア — エリアをクリックして予約</div>
+            <div class="gallery-mini-slides" id="miniSlides"></div>
+          </div>
+
+          <div class="music-player" style="margin-top:0.8rem">
+            <button class="music-btn" id="musicBtn" onclick="toggleMusic()">▶</button>
+            <div class="music-info">
+              <div class="music-title" id="musicTitle">▶ を押して BGM を再生</div>
+              <div class="music-sub" id="musicSub">中国・日本・英語の曲をランダム再生</div>
+              <div class="music-bar"><div class="music-progress" id="musicProgress"></div></div>
+            </div>
+            <div style="font-size:0.75rem;color:var(--muted)">🎵</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: 予約フォーム -->
+        <div style="position:sticky;top:80px">
+
+          <!-- Placeholder -->
+          <div id="resPlaceholder" style="border:1px dashed rgba(201,168,76,0.2);padding:3rem 2rem;text-align:center;background:rgba(10,12,16,0.5)">
+            <div style="font-size:3rem;margin-bottom:1rem;opacity:0.3">📋</div>
+            <div style="font-size:0.85rem;color:var(--muted);line-height:1.9">左のエリア図から<br>ご希望のエリアをクリックしてください</div>
+          </div>
+
+          <!-- Form panel -->
+          <div id="resPanel" style="display:none;border:1px solid rgba(201,168,76,0.25);background:rgba(10,12,16,0.85);backdrop-filter:blur(12px)">
+
+            <div style="background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.15);padding:1.1rem 1.5rem;display:flex;align-items:center;justify-content:space-between">
+              <div id="resPanelTitle" style="font-family:'Playfair Display';font-size:1rem;color:var(--gold)">エリアを選択してください</div>
+              <button onclick="closeResForm()" style="background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer">✕</button>
+            </div>
+
+            <div style="padding:1.5rem">
+
+              <!-- ビリヤードのテーブル選択グリッド -->
+              <div id="tableSelector" style="display:none;margin-bottom:1.2rem">
+                <div style="font-size:0.68rem;letter-spacing:0.15em;color:var(--gold);margin-bottom:0.6rem">テーブルを選択（赤＝使用中）</div>
+                <div id="tableGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px"></div>
+              </div>
+              <div id="selectedTableInfo" style="display:none;font-size:0.8rem;color:var(--gold);margin-bottom:0.8rem;padding:0.5rem 0.8rem;background:rgba(201,168,76,0.08);border-left:2px solid var(--gold)"></div>
+
+              <div class="res-field">
+                <label class="res-label">ご利用日</label>
+                <input class="res-input" type="date" id="resDate">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem">
+                <div class="res-field">
+                  <label class="res-label">開始時間</label>
+                  <select class="res-select" id="resTime">
+                    <option>13:00</option><option>14:00</option><option>15:00</option>
+                    <option>16:00</option><option>17:00</option><option>18:00</option>
+                    <option>19:00</option><option>20:00</option><option>21:00</option>
+                    <option>22:00</option><option>23:00</option>
+                  </select>
+                </div>
+                <div class="res-field">
+                  <label class="res-label">利用時間</label>
+                  <select class="res-select" id="resDuration">
+                    <option>30分</option><option>1時間</option><option>2時間</option><option>3時間</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="res-field">
+                <label class="res-label">お名前</label>
+                <input class="res-input" type="text" id="resName" placeholder="山田 太郎">
+              </div>
+              <div class="res-field">
+                <label class="res-label">電話番号</label>
+                <input class="res-input" type="tel" id="resPhone" placeholder="090-XXXX-XXXX">
+              </div>
+
+              <button class="btn-primary" style="width:100%;margin-top:0.8rem" onclick="submitReservation()">予約を確定する</button>
+
+              <div id="resConfirmBox" style="display:none;margin-top:1rem;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.25);padding:1.2rem;text-align:center">
+                <div style="color:var(--green2);font-size:1rem;margin-bottom:0.5rem">✅ 予約が完了しました</div>
+                <div id="resConfirmDetail" style="font-size:0.82rem;color:var(--text);line-height:1.9;margin-bottom:0.8rem"></div>
+                <p style="font-size:0.75rem;color:var(--muted)">📞 03-XXXX-XXXX へのご確認もお気軽に</p>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /right -->
+      </div><!-- /grid -->
+    </div>
+  </div>
+</section>
+
+<div id="reservation"></div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <a href="#home" class="footer-logo">PALACE <span>CLUB</span></a>
+      <p class="footer-desc">高田馬場の最高立地に構える総合エンターテインメントクラブ。ビリヤード・ゴルフ・麻雀が一つ屋根の下に。</p>
+    </div>
+    <div>
+      <div class="footer-heading">施設案内</div>
+      <ul class="footer-links">
+        <li><a href="#home">🎱 ビリヤード（17台）</a></li>
+        <li><a href="#golf">⛳ ゴルフ練習場</a></li>
+        <li><a href="#mahjong">🀄 麻雀クラブ</a></li>
+        <li><a href="#gallery">🖼 ギャラリー</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">ご利用案内</div>
+      <ul class="footer-links">
+        <li><a href="#events">🏆 イベント情報</a></li>
+        <li><a href="#gallery">📅 テーブル予約</a></li>
+        <li><a href="admin.html" target="_blank">⚙️ 管理画面</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">営業情報</div>
+      <ul class="footer-links" style="gap:0.4rem">
+        <li style="color:var(--muted);font-size:0.75rem">平日</li>
+        <li style="color:var(--text)">13:00 〜 25:00</li>
+        <li style="color:var(--muted);font-size:0.75rem;margin-top:0.4rem">土日祝</li>
+        <li style="color:var(--text)">10:00 〜 翌5:00</li>
+        <li style="color:var(--muted);font-size:0.75rem;margin-top:0.4rem">高田馬場駅 徒歩2分</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 PALACE CLUB. All rights reserved.</span>
+    <span>東京都新宿区高田馬場X-X-X</span>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// 1. LUXURY BACKGROUND (home section)
+// ============================================================
+(function(){
+  var bg = document.getElementById('luxuryBg');
+  if(!bg) return;
+  var palettes = [
+    'radial-gradient(ellipse at 20% 50%,#1a1205,#080a0d)',
+    'radial-gradient(ellipse at 70% 30%,#05101a,#060810)',
+    'radial-gradient(ellipse at 50% 20%,#100a18,#080810)',
+    'radial-gradient(ellipse at 10% 60%,#0a1505,#060c08)',
+    'radial-gradient(ellipse at 60% 70%,#18120a,#0a0c10)',
+    'radial-gradient(ellipse at 30% 40%,#050a14,#060810)',
+    'radial-gradient(ellipse at 80% 20%,#0e0e04,#080a08)',
+  ];
+  var pi = 0;
+  bg.style.cssText = 'position:absolute;inset:0;z-index:0;pointer-events:none;transition:background 4s ease';
+  bg.style.background = palettes[0];
+  setInterval(function(){ pi=(pi+1)%palettes.length; bg.style.background=palettes[pi]; }, 5000);
+
+  // gold particles
+  var section = document.getElementById('home');
+  if(!section) return;
+  var colors = ['rgba(201,168,76,0.7)','rgba(232,201,122,0.5)','rgba(255,235,180,0.4)'];
+  for(var i=0;i<20;i++){
+    var p = document.createElement('div');
+    var sz = (Math.random()*2+1).toFixed(1);
+    p.style.cssText = 'position:absolute;border-radius:50%;pointer-events:none;z-index:1;'
+      + 'left:' + (Math.random()*100).toFixed(1) + '%;'
+      + 'width:' + sz + 'px;height:' + sz + 'px;'
+      + 'background:' + colors[Math.floor(Math.random()*colors.length)] + ';'
+      + 'animation:particleDrift ' + (Math.random()*20+18).toFixed(0) + 's linear '
+      + (Math.random()*15).toFixed(0) + 's infinite;'
+      + 'box-shadow:0 0 4px rgba(201,168,76,0.3)';
+    section.appendChild(p);
+  }
+
+  // grid canvas
+  var canvas = document.getElementById('luxuryCanvas');
+  if(!canvas) return;
+  function drawGrid(){
+    var w = canvas.offsetWidth;
+    var h = canvas.offsetHeight;
+    if(!w || !h) return;
+    canvas.width = w; canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle='rgba(201,168,76,0.04)'; ctx.lineWidth=1;
+    for(var x=0;x<w;x+=80){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke(); }
+    for(var y=0;y<h;y+=80){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke(); }
+  }
+  setTimeout(drawGrid, 200);
+  window.addEventListener('resize', drawGrid);
+})();
+
+// ============================================================
+// 2. NAV
+// ============================================================
+function setActive(el){
+  document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});
+  el.classList.add('active');
+}
+
+// ============================================================
+// 3. SLIDESHOW — horizontal, 2s auto
+// ============================================================
+var SS = {};
+function initSlideshow(trackId, counterEl, dotsEl, interval){
+  var track = document.getElementById(trackId);
+  if(!track || !counterEl || !dotsEl) return;
+  var slides = track.querySelectorAll('.slide');
+  var n = slides.length;
+  if(!n) return;
+  var cur = 0;
+  dotsEl.innerHTML = '';
+  for(var i=0;i<n;i++){
+    (function(idx){
+      var d = document.createElement('div');
+      d.className = 'dot' + (idx===0?' active':'');
+      d.onclick = function(){ goSS(trackId, idx); };
+      dotsEl.appendChild(d);
+    })(i);
+  }
+  function render(){
+    track.style.transform = 'translateX(-' + (cur*100) + '%)';
+    counterEl.textContent = (cur+1) + ' / ' + n;
+    var dots = dotsEl.querySelectorAll('.dot');
+    for(var j=0;j<dots.length;j++) dots[j].classList.toggle('active', j===cur);
+  }
+  render();
+  var timer = setInterval(function(){ cur=(cur+1)%n; render(); }, interval);
+  SS[trackId] = { cur:cur, n:n, render:render, timer:timer };
+}
+function goSS(trackId, idx){
+  if(!SS[trackId]) return;
+  clearInterval(SS[trackId].timer);
+  SS[trackId].cur = ((idx%SS[trackId].n)+SS[trackId].n)%SS[trackId].n;
+  SS[trackId].render();
+  SS[trackId].timer = setInterval(function(){ SS[trackId].cur=(SS[trackId].cur+1)%SS[trackId].n; SS[trackId].render(); }, 2000);
+}
+function slidePrev(id){
+  var t = id+'Track';
+  if(SS[t]){ goSS(t, SS[t].cur-1); }
+}
+function slideNext(id){
+  var t = id+'Track';
+  if(SS[t]){ goSS(t, SS[t].cur+1); }
+}
+
+// ============================================================
+// 4. INIT on load
+// ============================================================
+window.addEventListener('load', function(){
+  initSlideshow('billTrack',    document.getElementById('billCounter'),    document.getElementById('billDots'),    2000);
+  initSlideshow('golfTrack',    document.getElementById('golfCounter'),    document.getElementById('golfDots'),    2000);
+  initSlideshow('mahjongTrack', document.getElementById('mahjongCounter'), document.getElementById('mahjongDots'), 2000);
+  // make all reveal elements visible immediately
+  document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('visible'); });
+  // init gallery photos
+  showAreaPhotos('billiard');
+  // render events
+  renderEvents();
+});
+
+// ============================================================
+// 5. GALLERY PHOTOS
+// ============================================================
+var areaData = {
+  billiard:{title:'🎱 ビリヤード — 17台 チャイニーズ８専門',photos:[
+    {bg:'#1a1205',icon:'🎱'},{bg:'#0d1520',icon:'🏆'},{bg:'#140a08',icon:'💫'},
+    {bg:'#0a0a14',icon:'🎯'},{bg:'#150e04',icon:'🥃'},{bg:'#080a18',icon:'⭐'},
+    {bg:'#120510',icon:'🌟'},{bg:'#041412',icon:'🎪'},{bg:'#181004',icon:'🔮'},{bg:'#060c18',icon:'✨'}
+  ]},
+  golf:{title:'⛳ ゴルフ — 室内練習場',photos:[
+    {bg:'#041a08',icon:'⛳'},{bg:'#0a1a04',icon:'🏌️'},{bg:'#04140a',icon:'📊'},
+    {bg:'#0a1808',icon:'🎯'},{bg:'#041008',icon:'💻'},{bg:'#0a0f05',icon:'🏆'},
+    {bg:'#0f1a0a',icon:'🌿'},{bg:'#051205',icon:'🎮'},{bg:'#0a1a05',icon:'📱'},{bg:'#0d0f0a',icon:'✅'}
+  ]},
+  mahjong:{title:'🀄 麻雀 — 優雅な中国風空間',photos:[
+    {bg:'#041520',icon:'🀄'},{bg:'#100430',icon:'🏮'},{bg:'#040a20',icon:'🍵'},
+    {bg:'#200410',icon:'🌸'},{bg:'#0a1505',icon:'🌿'},{bg:'#051010',icon:'🎎'},
+    {bg:'#100510',icon:'🎐'},{bg:'#050a10',icon:'🎋'},{bg:'#150a05',icon:'🎍'},{bg:'#0a0510',icon:'🏯'}
+  ]},
+  entrance:{title:'🚪 エントランス / ラウンジ',photos:[
+    {bg:'#1a1200',icon:'🚪'},{bg:'#120d00',icon:'👑'},{bg:'#1a0d00',icon:'⭐'},
+    {bg:'#0d1200',icon:'🌟'},{bg:'#1a1500',icon:'💎'}
+  ]}
+};
+var galleryTimer = null;
+function showAreaPhotos(area){
+  var d = areaData[area];
+  if(!d) return;
+  var titleEl = document.getElementById('viewerTitle');
+  if(titleEl) titleEl.textContent = d.title;
+  var ms = document.getElementById('miniSlides');
+  if(!ms) return;
+  ms.innerHTML = '';
+  d.photos.forEach(function(p, i){
+    var el = document.createElement('div');
+    el.className = 'mini-slide' + (i===0?' active':'');
+    el.style.background = p.bg;
+    el.innerHTML = '<span style="font-size:1.8rem">' + p.icon + '</span>';
+    el.onclick = function(){
+      document.querySelectorAll('.mini-slide').forEach(function(m){ m.classList.remove('active'); });
+      el.classList.add('active');
+    };
+    ms.appendChild(el);
+  });
+  clearInterval(galleryTimer);
+  var gi = 0;
+  galleryTimer = setInterval(function(){
+    var slides = document.querySelectorAll('.mini-slide');
+    if(!slides.length) return;
+    slides.forEach(function(s){ s.classList.remove('active'); });
+    gi = (gi+1) % slides.length;
+    slides[gi].classList.add('active');
+  }, 2000);
+}
+
+// ============================================================
+// 6. BGM
+// ============================================================
+var songs = [
+  {title:'茉莉花 (Mo Li Hua)',   sub:'🇨🇳 中国 — 伝統民謡'},
+  {title:'春の海',                sub:'🇯🇵 日本 — 宮城道雄'},
+  {title:'Fly Me to the Moon',   sub:'🇬🇧 English — Jazz Standard'},
+  {title:'梁山伯与祝英台',        sub:'🇨🇳 中国 — クラシック'},
+  {title:'さくら さくら',         sub:'🇯🇵 日本 — 伝統曲'},
+  {title:'The Way You Look Tonight', sub:'🇬🇧 English — Frank Sinatra'},
+  {title:'高山流水',              sub:'🇨🇳 中国 — 古琴曲'},
+  {title:'花は咲く',              sub:'🇯🇵 日本 — NHK'},
+];
+var musicPlaying=false, songIdx=0, songTimer=null, progressTimer=null, progressVal=0;
+function toggleMusic(){
+  var btn=document.getElementById('musicBtn');
+  var prog=document.getElementById('musicProgress');
+  if(musicPlaying){
+    musicPlaying=false; btn.textContent='▶';
+    clearTimeout(songTimer); clearInterval(progressTimer);
+    document.getElementById('musicTitle').textContent='▶ を押して BGM を再生';
+    document.getElementById('musicSub').textContent='中国・日本・英語の曲をランダム再生';
+    prog.style.width='0%';
+  } else {
+    musicPlaying=true; btn.textContent='⏸';
+    songIdx = Math.floor(Math.random()*songs.length);
+    playSong();
+  }
+}
+function playSong(){
+  if(!musicPlaying) return;
+  var prev = songIdx;
+  do{ songIdx=Math.floor(Math.random()*songs.length); }while(songs.length>1 && songIdx===prev);
+  var s = songs[songIdx];
+  document.getElementById('musicTitle').textContent = s.title;
+  document.getElementById('musicSub').textContent = s.sub;
+  var prog = document.getElementById('musicProgress');
+  var duration = 25000 + Math.random()*10000;
+  progressVal = 0; prog.style.width = '0%';
+  clearInterval(progressTimer);
+  progressTimer = setInterval(function(){
+    progressVal += 100/(duration/200);
+    prog.style.width = Math.min(progressVal,100) + '%';
+  }, 200);
+  songTimer = setTimeout(function(){ clearInterval(progressTimer); playSong(); }, duration);
+}
+
+// ============================================================
+// 7. EVENTS
+// ============================================================
+var events = [
+  {type:'BILLIARD TOURNAMENT',name:'春季チャイニーズ８選手権',date:'2025年6月15日（日）',time:'14:00〜20:00',entry:'¥2,000',prizes:'優勝¥50,000 / 準優勝¥20,000',max:32,current:18},
+  {type:'MAHJONG EVENT',      name:'麻雀フレンドリー大会',    date:'2025年6月22日（日）',time:'13:00〜18:00',entry:'¥1,500',prizes:'優勝¥30,000 / 準優勝¥15,000',max:24,current:9},
+  {type:'GOLF CHALLENGE',     name:'室内ゴルフ ニアピン競技', date:'2025年6月28日（土）',time:'11:00〜17:00',entry:'¥1,000',prizes:'優勝¥20,000 / 各種賞品',     max:20,current:5},
+];
+function renderEvents(){
+  var grid = document.getElementById('eventGrid');
+  if(!grid) return;
+  grid.innerHTML = events.map(function(e,ei){
+    var pct = Math.round(e.current/e.max*100);
+    return '<div class="event-card">'
+      +'<div class="event-header">'
+        +'<div class="event-type">'+e.type+'</div>'
+        +'<div class="event-name">'+e.name+'</div>'
+      +'</div>'
+      +'<div class="event-body">'
+        +'<div class="event-meta">'
+          +'<div class="event-meta-item"><span>📅 日時</span>'+e.date+' '+e.time+'</div>'
+          +'<div class="event-meta-item"><span>💰 参加費</span>'+e.entry+'</div>'
+          +'<div class="event-meta-item"><span>🏆 賞金</span>'+e.prizes+'</div>'
+          +'<div class="event-meta-item"><span>👥 定員</span>'+e.max+'名（残り'+(e.max-e.current)+'名）</div>'
+        +'</div>'
+        +'<div style="margin-bottom:1rem">'
+          +'<div style="height:4px;background:rgba(255,255,255,0.08);overflow:hidden">'
+            +'<div style="height:100%;background:var(--gold);width:'+pct+'%"></div>'
+          +'</div>'
+          +'<div style="font-size:0.7rem;color:var(--muted);margin-top:0.3rem">エントリー '+e.current+'/'+e.max+'名</div>'
+        +'</div>'
+        +'<div style="font-size:0.72rem;color:var(--gold);margin-bottom:0.5rem">エントリー</div>'
+        +'<input class="entry-input" placeholder="お名前（ニックネーム可）" id="en'+ei+'">'
+        +'<input class="entry-input" placeholder="電話番号" id="ep'+ei+'" type="tel" style="margin-top:0.4rem">'
+        +'<button class="btn-entry" onclick="submitEntry('+ei+')" style="margin-top:0.5rem">エントリー＆会員登録</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+function submitEntry(ei){
+  var name  = document.getElementById('en'+ei).value.trim();
+  var phone = document.getElementById('ep'+ei).value.trim();
+  if(!name||!phone){ showToast('名前と電話番号を入力してください'); return; }
+  events[ei].current = Math.min(events[ei].current+1, events[ei].max);
+  showToast('✅ エントリー完了！会員登録も完了しました。');
+  renderEvents();
+}
+
+// ============================================================
+// 8. RESERVATION
+// ============================================================
+var currentZone  = '';
+var currentTable = '';
+
+function openResForm(zone, label){
+  currentZone  = zone;
+  currentTable = '';
+  showAreaPhotos(zone === 'entrance' ? 'billiard' : zone);
+
+  var placeholder = document.getElementById('resPlaceholder');
+  var panel       = document.getElementById('resPanel');
+  var titleEl     = document.getElementById('resPanelTitle');
+  var confirmBox  = document.getElementById('resConfirmBox');
+  if(!panel) return;
+
+  if(placeholder) placeholder.style.display = 'none';
+  panel.style.display = 'block';
+  if(titleEl)    titleEl.textContent = label;
+  if(confirmBox) confirmBox.style.display = 'none';
+
+  var today = new Date().toISOString().split('T')[0];
+  var dateEl = document.getElementById('resDate');
+  if(dateEl){ dateEl.min = today; if(!dateEl.value) dateEl.value = today; }
+
+  var tsel = document.getElementById('tableSelector');
+  var tinfo = document.getElementById('selectedTableInfo');
+  if(zone === 'billiard'){
+    if(tsel)  tsel.style.display  = 'block';
+    buildTableGrid();
+  } else {
+    if(tsel)  tsel.style.display  = 'none';
+    if(tinfo) tinfo.style.display = 'none';
+  }
+}
+
+function closeResForm(){
+  var panel       = document.getElementById('resPanel');
+  var placeholder = document.getElementById('resPlaceholder');
+  if(panel)       panel.style.display = 'none';
+  if(placeholder) placeholder.style.display = 'block';
+}
+
+function buildTableGrid(){
+  var grid = document.getElementById('tableGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  var occupied = [3,7,11];
+  for(var i=1;i<=17;i++){
+    var btn = document.createElement('button');
+    var isOcc = occupied.indexOf(i-1) >= 0;
+    btn.textContent = i;
+    btn.style.cssText = 'padding:0.4rem 0;font-size:0.72rem;cursor:'+(isOcc?'not-allowed':'pointer')+';'
+      +'border:1px solid '+(isOcc?'rgba(239,68,68,0.5)':'rgba(201,168,76,0.3)')+';'
+      +'background:'+(isOcc?'rgba(239,68,68,0.1)':'rgba(201,168,76,0.06)')+';'
+      +'color:'+(isOcc?'#ef4444':'var(--gold)')+';border-radius:2px;transition:all 0.2s';
+    btn.disabled = isOcc;
+    btn.id = 'tbl-'+i;
+    if(!isOcc){
+      (function(n,b){
+        b.onclick = function(){ selectTableBtn(n,b); };
+      })(i,btn);
+    }
+    grid.appendChild(btn);
+  }
+}
+
+function selectTableBtn(n, btn){
+  var grid = document.getElementById('tableGrid');
+  if(grid){
+    var btns = grid.querySelectorAll('button:not(:disabled)');
+    btns.forEach(function(b){
+      b.style.background='rgba(201,168,76,0.06)';
+      b.style.borderColor='rgba(201,168,76,0.3)';
+      b.style.fontWeight='normal';
+    });
+  }
+  btn.style.background='rgba(201,168,76,0.25)';
+  btn.style.borderColor='var(--gold)';
+  btn.style.fontWeight='700';
+  currentTable = 'テーブル '+n;
+  var info = document.getElementById('selectedTableInfo');
+  if(info){ info.style.display='block'; info.textContent='選択中: テーブル '+n; }
+}
+
+function submitReservation(){
+  var name  = (document.getElementById('resName')     ||{}).value||'';
+  var phone = (document.getElementById('resPhone')    ||{}).value||'';
+  var date  = (document.getElementById('resDate')     ||{}).value||'';
+  var time  = (document.getElementById('resTime')     ||{value:'13:00'}).value;
+  var dur   = (document.getElementById('resDuration') ||{value:'1時間'}).value;
+  var areaLabel = (document.getElementById('resPanelTitle')||{}).textContent||'';
+
+  if(!name.trim())  { showToast('お名前を入力してください'); return; }
+  if(!phone.trim()) { showToast('電話番号を入力してください'); return; }
+  if(!date)         { showToast('日付を選択してください'); return; }
+  if(currentZone==='billiard' && !currentTable){ showToast('テーブルを選択してください'); return; }
+
+  var lines = [areaLabel];
+  if(currentTable) lines.push(currentTable);
+  lines.push('日付: '+date, '時間: '+time+' ('+dur+')', '名前: '+name, '電話: '+phone);
+
+  var det = document.getElementById('resConfirmDetail');
+  var box = document.getElementById('resConfirmBox');
+  if(det) det.textContent = lines.join(' / ');
+  if(box) box.style.display = 'block';
+  showToast('✅ 予約が完了しました！');
+
+  document.getElementById('resName').value  = '';
+  document.getElementById('resPhone').value = '';
+  currentTable = '';
+  buildTableGrid();
+  var inf = document.getElementById('selectedTableInfo');
+  if(inf) inf.style.display = 'none';
+}
+
+// ============================================================
+// 9. TOAST
+// ============================================================
+function showToast(msg){
+  var t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3500);
+}
+</script>
+<style>
+:root{
+  --gold:#c9a84c;--gold2:#e8c97a;
+  --dark:#06080b;--card:#101820;
+  --text:#f0ece4;--muted:#7a8a9a;
+  --green2:#22c55e;--red:#c0392b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden}
+
+/* ===== NAV ===== */
+nav{
+  position:fixed;top:0;width:100%;z-index:200;
+  padding:0 2rem;
+  background:rgba(6,8,11,0.95);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(201,168,76,0.18);
+  display:flex;align-items:center;justify-content:space-between;
+  height:62px;
+}
+.nav-logo{font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:0.25em;color:var(--gold);text-decoration:none}
+.nav-logo span{color:var(--text)}
+.nav-links{display:flex;gap:0;list-style:none}
+.nav-links a{
+  display:flex;align-items:center;gap:0.4rem;
+  color:var(--muted);text-decoration:none;
+  font-size:0.78rem;letter-spacing:0.08em;
+  padding:0 1rem;height:62px;
+  border-bottom:2px solid transparent;
+  transition:all 0.25s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);border-bottom-color:var(--gold)}
+.nav-reserve{
+  background:var(--gold);color:#06080b!important;
+  font-weight:700;border-radius:2px;
+  height:36px!important;padding:0 1.2rem!important;
+  border-bottom:none!important;margin-left:0.8rem;
+}
+.nav-reserve:hover{background:var(--gold2)!important}
+
+/* ===== BUTTONS ===== */
+.btn-primary{
+  background:var(--gold);color:#06080b;
+  padding:0.85rem 2.2rem;font-weight:700;font-size:0.88rem;
+  letter-spacing:0.15em;border:none;cursor:pointer;
+  transition:all 0.3s;text-decoration:none;display:inline-block;
+}
+.btn-primary:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn-ghost{
+  border:1px solid rgba(201,168,76,0.5);color:var(--gold);
+  padding:0.85rem 2rem;font-size:0.85rem;
+  letter-spacing:0.1em;cursor:pointer;transition:all 0.3s;
+  text-decoration:none;display:inline-block;background:transparent;
+}
+.btn-ghost:hover{border-color:var(--gold);background:rgba(201,168,76,0.08)}
+
+/* ===== SHARED SECTION STYLES ===== */
+.sec-label{font-size:0.65rem;letter-spacing:0.4em;color:var(--gold);margin-bottom:0.8rem;text-transform:uppercase}
+.sec-title{font-family:'Playfair Display';font-size:clamp(1.8rem,4vw,3rem);line-height:1.2;margin-bottom:1rem}
+.sec-title em{font-style:italic;color:var(--gold)}
+.divider{width:50px;height:2px;background:var(--gold);margin:1.2rem 0 2rem}
+.reveal{opacity:0;transform:translateY(20px);transition:all 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+/* Fallback: sections without scroll trigger show immediately */
+#golf .reveal, #mahjong .reveal{opacity:1;transform:none}
+
+/* ===== PRICE TABLE ===== */
+.price-table{width:100%;border-collapse:collapse;margin-top:1.5rem}
+.price-table th{background:rgba(201,168,76,0.1);color:var(--gold);padding:0.7rem 1rem;text-align:left;font-size:0.78rem;letter-spacing:0.1em;border-bottom:1px solid rgba(201,168,76,0.3)}
+.price-table td{padding:0.7rem 1rem;font-size:0.85rem;border-bottom:1px solid rgba(255,255,255,0.05)}
+.price-table tr:hover td{background:rgba(255,255,255,0.02)}
+.highlight-price{color:var(--gold);font-weight:700;font-family:'Bebas Neue';font-size:1.2rem}
+
+/* ===== ACCESS ===== */
+.access-items{display:flex;flex-direction:column;gap:1.5rem}
+.access-item{display:flex;gap:1rem;align-items:flex-start}
+.access-icon{width:40px;height:40px;border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.access-text strong{display:block;color:var(--gold);font-size:0.75rem;letter-spacing:0.1em;margin-bottom:0.3rem}
+.access-text span{font-size:0.85rem;color:var(--muted);line-height:1.7}
+
+/* ===== SLIDESHOW — HORIZONTAL ===== */
+.slideshow{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(201,168,76,0.25);
+  background:#0a0c10;
+}
+.slide-track{
+  display:flex;height:100%;
+  transition:transform 0.55s cubic-bezier(0.77,0,0.18,1);
+  will-change:transform;
+}
+.slide{
+  flex:0 0 100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:1rem;
+  font-size:4.5rem;position:relative;overflow:hidden;
+}
+.slide-label{
+  font-family:'Bebas Neue';font-size:1.3rem;
+  color:var(--gold);letter-spacing:0.2em;
+  position:relative;z-index:2;
+}
+.slide-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(0,0,0,0.55);border:1px solid rgba(201,168,76,0.35);
+  color:var(--gold);font-size:1.4rem;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:5;transition:all 0.2s;user-select:none;line-height:1;
+}
+.slide-arrow:hover{background:rgba(201,168,76,0.25);border-color:var(--gold)}
+.slide-prev{left:0.5rem}
+.slide-next{right:0.5rem}
+.slide-dots{
+  position:absolute;bottom:0.8rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:0.45rem;z-index:5;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(201,168,76,0.3);cursor:pointer;transition:all 0.3s}
+.dot.active{background:var(--gold);transform:scale(1.35)}
+.slide-counter{
+  position:absolute;top:0.7rem;right:0.7rem;
+  background:rgba(0,0,0,0.65);color:var(--gold);
+  font-size:0.72rem;padding:0.25rem 0.6rem;
+  font-family:'Bebas Neue';letter-spacing:0.1em;z-index:5;
+}
+
+/* Luxury billiard slide palette — deep, rich, elegant */
+.sc0{background:linear-gradient(150deg,#0d0a05,#2a1f08)}
+.sc1{background:linear-gradient(150deg,#050a14,#0d1f38)}
+.sc2{background:linear-gradient(150deg,#140505,#2e0e0e)}
+.sc3{background:linear-gradient(150deg,#06080a,#101828)}
+.sc4{background:linear-gradient(150deg,#0a0805,#201808)}
+.sc5{background:linear-gradient(150deg,#08050a,#180e22)}
+.sc6{background:linear-gradient(150deg,#050a08,#0e1e14)}
+.sc7{background:linear-gradient(150deg,#0a0a05,#1e1e08)}
+.sc8{background:linear-gradient(150deg,#0a0505,#200808)}
+.sc9{background:linear-gradient(150deg,#050808,#0e1818)}
+
+/* golf slides */
+.sg0{background:linear-gradient(135deg,#041a08,#0a3a14)}
+.sg1{background:linear-gradient(135deg,#0a1a04,#1a3a08)}
+.sg2{background:linear-gradient(135deg,#04140a,#082a14)}
+.sg3{background:linear-gradient(135deg,#0a1808,#143010)}
+.sg4{background:linear-gradient(135deg,#041008,#0a2010)}
+
+/* mahjong slides */
+.sm0{background:linear-gradient(135deg,#041520,#083040)}
+.sm1{background:linear-gradient(135deg,#100430,#200860)}
+.sm2{background:linear-gradient(135deg,#040a20,#081540)}
+.sm3{background:linear-gradient(135deg,#200410,#400820)}
+.sm4{background:linear-gradient(135deg,#041020,#081a35)}
+
+/* ===== BILLIARD PAGE ===== */
+#home{position:relative;padding-top:62px;overflow:hidden;background:#0a0c0f}
+
+/* Luxury background — subtle animated gold shimmer */
+.luxury-bg{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  transition:background 3s ease;
+}
+@keyframes shimmer{
+  0%,100%{opacity:0.6}
+  50%{opacity:1}
+}
+.luxury-particle{
+  position:absolute;border-radius:50%;pointer-events:none;
+  animation:particleDrift linear infinite;
+  opacity:0;
+}
+@keyframes particleDrift{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:0.7}
+  90%{opacity:0.4}
+  100%{transform:translateY(-10vh) scale(1.2);opacity:0}
+}
+
+/* Billiard slideshow container */
+.billiard-slideshow-wrap{
+  position:relative;z-index:2;
+  max-width:1080px;margin:0 auto;
+  padding:0 2rem 3rem;
+}
+.billiard-slideshow-wrap .slideshow{aspect-ratio:16/7}
+
+/* Map + details */
+.billiard-detail{
+  position:relative;z-index:2;
+  background:rgba(8,10,14,0.9);
+  backdrop-filter:blur(12px);
+  padding:5rem 2rem;
+  border-top:1px solid rgba(201,168,76,0.15);
+}
+.billiard-grid{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;
+}
+.map-frame{
+  width:100%;aspect-ratio:4/3;
+  background:linear-gradient(135deg,#0d1520,#0a1018);
+  border:1px solid rgba(201,168,76,0.2);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;font-size:3rem;
+}
+.map-frame iframe{
+  width:100%;height:100%;border:none;filter:grayscale(60%) invert(0.9) hue-rotate(180deg);
+}
+
+/* ===== GOLF ===== */
+#golf{background:linear-gradient(180deg,#060c08,#04100a,#060c08);padding:6rem 2rem}
+.golf-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.golf-slideshow .slideshow{aspect-ratio:4/3}
+.equipment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem}
+.equip-card{background:rgba(0,0,0,0.35);border:1px solid rgba(34,197,94,0.15);padding:1.2rem;text-align:center;transition:all 0.3s}
+.equip-card:hover{border-color:rgba(34,197,94,0.4);transform:translateY(-3px)}
+.equip-icon{font-size:2rem;margin-bottom:0.7rem}
+.equip-name{font-size:0.8rem;color:#22c55e;font-weight:600;margin-bottom:0.3rem}
+.equip-desc{font-size:0.72rem;color:var(--muted);line-height:1.6}
+
+/* ===== MAHJONG ===== */
+#mahjong{
+  padding:6rem 2rem;
+  background:
+    linear-gradient(135deg,rgba(8,14,22,0.97),rgba(5,10,18,0.98)),
+    repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(34,197,94,0.025) 20px,rgba(34,197,94,0.025) 40px);
+}
+.mahjong-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.mahjong-slideshow .slideshow{aspect-ratio:4/3;border-color:rgba(34,197,94,0.2)}
+.mahjong-concept{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
+.concept-card{border:1px solid rgba(34,197,94,0.2);padding:1.5rem;background:rgba(0,0,0,0.3);text-align:center}
+.concept-icon{font-size:2.5rem;margin-bottom:1rem}
+.concept-title{font-size:0.9rem;color:#22c55e;margin-bottom:0.5rem;font-weight:600}
+.concept-desc{font-size:0.78rem;color:var(--muted);line-height:1.7}
+
+/* ===== GALLERY ===== */
+#gallery{padding:6rem 2rem;background:#040508}
+.area-map{
+  width:100%;max-width:960px;margin:0 auto;aspect-ratio:16/9;
+  background:linear-gradient(135deg,#0d1a12,#0a1508);
+  border:2px solid rgba(201,168,76,0.3);
+  position:relative;overflow:hidden;cursor:crosshair;
+}
+.area-zone{
+  position:absolute;border:1px solid rgba(255,255,255,0.12);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:0.3rem;
+  cursor:pointer;transition:all 0.3s;text-align:center;
+}
+.area-zone:hover{border-color:var(--gold);background:rgba(201,168,76,0.1)!important}
+.area-zone-label{font-size:0.68rem;color:var(--gold);letter-spacing:0.1em;font-weight:600}
+.area-zone-sub{font-size:0.58rem;color:var(--muted)}
+.zone-billiard{top:10%;left:5%;width:45%;height:55%;background:rgba(26,58,42,0.3)}
+.zone-golf{top:10%;left:55%;width:40%;height:40%;background:rgba(10,50,20,0.3)}
+.zone-mahjong{top:55%;left:55%;width:40%;height:35%;background:rgba(20,10,50,0.3)}
+.zone-entrance{top:70%;left:5%;width:45%;height:20%;background:rgba(30,20,10,0.3)}
+.gallery-photo-viewer{
+  max-width:960px;margin:1.2rem auto 0;
+  background:rgba(16,24,32,0.8);border:1px solid rgba(201,168,76,0.2);padding:1.2rem;
+}
+.gallery-viewer-title{font-size:0.8rem;color:var(--gold);letter-spacing:0.12em;margin-bottom:0.8rem}
+.gallery-mini-slides{display:flex;gap:0.5rem;overflow-x:auto;padding-bottom:0.4rem}
+.mini-slide{
+  width:120px;height:80px;flex-shrink:0;
+  border:2px solid transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:all 0.3s;
+}
+.mini-slide.active{border-color:var(--gold)}
+
+/* Music player */
+.music-player{
+  max-width:960px;margin:1rem auto 0;
+  display:flex;align-items:center;gap:1rem;
+  background:rgba(0,0,0,0.6);border:1px solid rgba(201,168,76,0.2);
+  padding:0.8rem 1.2rem;
+}
+.music-btn{
+  background:var(--gold);color:#06080b;border:none;
+  width:36px;height:36px;border-radius:50%;cursor:pointer;
+  font-size:1rem;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.2s;
+}
+.music-btn:hover{background:var(--gold2)}
+.music-info{flex:1}
+.music-title{font-size:0.8rem;color:var(--text)}
+.music-sub{font-size:0.7rem;color:var(--muted)}
+.music-bar{width:100%;height:3px;background:rgba(255,255,255,0.08);margin-top:0.4rem;overflow:hidden}
+.music-progress{height:100%;background:var(--gold);width:0%;transition:width 0.3s}
+
+/* ===== EVENTS ===== */
+#events{padding:6rem 2rem;background:rgba(16,24,32,0.9)}
+.event-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
+.event-card{background:var(--card);border:1px solid rgba(201,168,76,0.2);overflow:hidden;transition:all 0.3s}
+.event-card:hover{border-color:rgba(201,168,76,0.5);transform:translateY(-4px)}
+.event-header{background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.04));padding:1.5rem;border-bottom:1px solid rgba(201,168,76,0.12)}
+.event-type{font-size:0.63rem;letter-spacing:0.2em;color:var(--gold);margin-bottom:0.5rem}
+.event-name{font-family:'Playfair Display';font-size:1.25rem;line-height:1.3}
+.event-body{padding:1.5rem}
+.event-meta{display:flex;flex-direction:column;gap:0.45rem;margin-bottom:1.3rem}
+.event-meta-item{display:flex;gap:0.5rem;font-size:0.78rem;color:var(--muted)}
+.event-meta-item span:first-child{color:var(--gold);width:70px;flex-shrink:0}
+.entry-methods{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
+.entry-method{border:1px solid rgba(255,255,255,0.1);padding:1rem;text-align:center;cursor:pointer;transition:all 0.3s}
+.entry-method:hover{border-color:var(--gold);background:rgba(201,168,76,0.05)}
+.entry-method-icon{font-size:1.5rem;margin-bottom:0.5rem}
+.entry-method-label{font-size:0.7rem;color:var(--muted);line-height:1.5}
+.qr-box{width:80px;height:80px;margin:0.5rem auto 0;background:#fff;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.entry-form{margin-top:1rem}
+.entry-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:0.6rem 0.8rem;font-family:'Noto Sans JP';font-size:0.82rem;margin-bottom:0.5rem;outline:none}
+.entry-input:focus{border-color:var(--gold)}
+.btn-entry{width:100%;background:var(--gold);color:#06080b;padding:0.7rem;font-weight:700;font-size:0.82rem;border:none;cursor:pointer;letter-spacing:0.1em;transition:all 0.3s}
+.btn-entry:hover{background:var(--gold2)}
+
+/* ===== RESERVATION ===== */
+#reservation{background:rgba(16,24,32,0.95);padding:6rem 2rem}
+.res-area-map{
+  width:100%;aspect-ratio:16/9;max-width:900px;margin:2rem auto;
+  background:linear-gradient(135deg,#0d1a12,#0a1508);
+  border:2px solid rgba(201,168,76,0.3);position:relative;
+  cursor:pointer;overflow:hidden;
+}
+.res-zone{
+  position:absolute;border:2px solid transparent;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:0.3rem;cursor:pointer;
+  text-align:center;transition:all 0.3s;
+}
+.res-zone:hover,.res-zone.selected{border-color:var(--gold)!important;background:rgba(201,168,76,0.12)!important}
+.res-zone-label{font-size:0.72rem;color:var(--gold);letter-spacing:0.08em;font-weight:700}
+.res-zone-status{font-size:0.6rem}
+.seat-dot{
+  position:absolute;width:18px;height:18px;border-radius:50%;
+  border:2px solid var(--gold);background:rgba(201,168,76,0.2);
+  cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;
+  font-size:0.5rem;color:var(--gold);
+}
+.seat-dot:hover,.seat-dot.selected{background:var(--gold);color:#06080b}
+.seat-dot.occupied{border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.1);color:rgba(239,68,68,0.5);cursor:not-allowed}
+.res-panel{max-width:500px;margin:2rem auto;background:var(--card);border:1px solid rgba(201,168,76,0.2);padding:2rem;display:none}
+.res-panel.show{display:block}
+.res-panel-title{font-family:'Playfair Display';font-size:1.3rem;margin-bottom:1.5rem;color:var(--gold)}
+.res-field{margin-bottom:1rem}
+.res-label{font-size:0.7rem;letter-spacing:0.12em;color:var(--gold);display:block;margin-bottom:0.4rem}
+.res-input,.res-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:0.7rem 1rem;font-family:'Noto Sans JP';font-size:0.85rem;outline:none}
+.res-input:focus,.res-select:focus{border-color:var(--gold)}
+.qr-result{text-align:center;padding:2rem;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);margin-top:1.5rem;display:none}
+.qr-result.show{display:block}
+.qr-big{width:160px;height:160px;background:#fff;margin:1rem auto;display:flex;align-items:center;justify-content:center;font-size:5rem}
+.qr-inst{font-size:0.8rem;color:var(--muted);line-height:1.8;margin-top:1rem}
+
+/* ===== FOOTER ===== */
+footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4rem 2rem 2rem}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem}
+.footer-logo{font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:0.25em;color:var(--gold);display:block;margin-bottom:0.8rem;text-decoration:none}
+.footer-logo span{color:var(--text)}
+.footer-desc{font-size:0.8rem;color:var(--muted);line-height:1.8}
+.footer-heading{font-size:0.63rem;letter-spacing:0.25em;color:var(--gold);margin-bottom:1rem;text-transform:uppercase}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:0.6rem}
+.footer-links a{font-size:0.82rem;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.footer-links a:hover{color:var(--gold)}
+.footer-bottom{max-width:1200px;margin:3rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;font-size:0.7rem;color:rgba(138,155,170,0.4)}
+
+/* Toast */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:500;background:var(--green2);color:#fff;padding:0.8rem 1.5rem;font-size:0.85rem;transform:translateY(100px);opacity:0;transition:all 0.4s}
+.toast.show{transform:translateY(0);opacity:1}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#home" class="nav-logo">PALACE <span>CLUB</span></a>
+  <ul class="nav-links">
+    <li><a href="#home" class="active" onclick="setActive(this)">🎱 ビリヤード</a></li>
+    <li><a href="#golf"    onclick="setActive(this)">⛳ ゴルフ</a></li>
+    <li><a href="#mahjong" onclick="setActive(this)">🀄 麻雀</a></li>
+    <li><a href="#gallery" onclick="setActive(this)">🖼 ギャラリー</a></li>
+    <li><a href="#events"  onclick="setActive(this)">🏆 イベント</a></li>
+    <li><a href="#gallery" class="nav-reserve" onclick="setActive(this)">予約する</a></li>
+  </ul>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+
+</body>
+</html>
