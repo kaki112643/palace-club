@@ -232,9 +232,9 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   h1{font-size:2rem!important}
   .tbl-grid{grid-template-columns:repeat(6,1fr)!important}
   /* スマホ: 予約フォームを下部シートで表示 */
-  #resPanel{position:fixed!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;max-height:80vh!important;overflow-y:auto!important;z-index:1000!important;border-top:2px solid var(--gold)!important;background:#0d0f12!important;display:none!important;top:auto!important}
+  #resPanel{position:fixed!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;max-height:85vh!important;overflow-y:auto!important;z-index:10000!important;border-top:2px solid var(--gold)!important;background:#0d0f12!important;display:none!important;top:auto!important}
   #resPanel.open-mobile{display:block!important}
-  #resOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999}
+  #resOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999}
   #resOverlay.show{display:block}
 }
 @media(max-width:400px){.equip-grid{grid-template-columns:1fr!important}}
@@ -647,15 +647,84 @@ function applyData(data) {
   // イベント
   renderEvents(data.events || []);
 
-  // 施設台数（エリア図のサブテキスト更新）
+  // 施設台数
   var fac = data.facility || {};
   if (fac.billiard_tables) {
     var sub = document.querySelector('.z-bill .az-sub');
     if (sub) sub.textContent = fac.billiard_tables + '台 — タップで予約';
   }
-
-  // 予約テーブル台数更新
   window._billTables = fac.billiard_tables || 17;
+
+  // エリア図の編集内容を反映
+  if (data.areaMap) {
+    var am = data.areaMap;
+    var zones = {
+      billiard: {icon:'az-bil-icon', name:'az-bil-name', sub:'az-bil-sub'},
+      golf:     {icon:'az-golf-icon',name:'az-golf-name',sub:'az-golf-sub'},
+      mahjong:  {icon:'az-mj-icon',  name:'az-mj-name',  sub:'az-mj-sub'},
+      entrance: {icon:'az-ent-icon', name:'az-ent-name', sub:null}
+    };
+    // ホームページのエリア図ゾーンを更新
+    if (am.billiard) {
+      var bZone = document.querySelector('.z-bill');
+      if (bZone) {
+        bZone.querySelector('div:first-child').textContent = am.billiard.icon || '🎱';
+        var bLbl = bZone.querySelector('.az-lbl');
+        if (bLbl) bLbl.textContent = am.billiard.name || 'BILLIARD';
+        var bSub = bZone.querySelector('.az-sub');
+        if (bSub) bSub.textContent = am.billiard.sub || '';
+      }
+    }
+    if (am.golf) {
+      var gZone = document.querySelector('.z-golf');
+      if (gZone) {
+        gZone.querySelector('div:first-child').textContent = am.golf.icon || '⛳';
+        var gLbl = gZone.querySelector('.az-lbl');
+        if (gLbl) gLbl.textContent = am.golf.name || 'GOLF';
+      }
+    }
+    if (am.mahjong) {
+      var mZone = document.querySelector('.z-mj');
+      if (mZone) {
+        mZone.querySelector('div:first-child').textContent = am.mahjong.icon || '🀄';
+        var mLbl = mZone.querySelector('.az-lbl');
+        if (mLbl) mLbl.textContent = am.mahjong.name || 'MAHJONG';
+      }
+    }
+  }
+
+  // 写真をスライドショーに反映
+  if (data.photos) {
+    applyPhotosToSlideshow('billiard', data.photos.billiard, 'tr0', 'cnt0', 'dots0');
+    applyPhotosToSlideshow('golf',     data.photos.golf,     'tr1', 'cnt1', 'dots1');
+    applyPhotosToSlideshow('mahjong',  data.photos.mahjong,  'tr2', 'cnt2', 'dots2');
+  }
+}
+
+function applyPhotosToSlideshow(area, photos, trackId, cntId, dotsId) {
+  if (!photos) return;
+  var keys = Object.keys(photos);
+  if (!keys.length) return;
+  var track = document.getElementById(trackId);
+  if (!track) return;
+  // 既存のスライドをクリアして写真スライドを追加
+  var existing = track.querySelectorAll('.slide.photo-slide');
+  existing.forEach(function(s){ s.parentNode.removeChild(s); });
+  // 既存絵文字スライドを非表示
+  track.querySelectorAll('.slide:not(.photo-slide)').forEach(function(s){ s.style.display='none'; });
+  keys.forEach(function(k) {
+    var p = photos[k];
+    var slide = document.createElement('div');
+    slide.className = 'slide photo-slide';
+    slide.style.cssText = 'background:#0a0c10;flex-shrink:0;width:100%;height:100%';
+    slide.innerHTML = '<img src="'+p.url+'" style="width:100%;height:100%;object-fit:cover">';
+    track.appendChild(slide);
+  });
+  // スライドショーを再初期化
+  var cntEl  = document.getElementById(cntId);
+  var dotsEl = document.getElementById(dotsId);
+  if (SS[trackId]) clearInterval(SS[trackId].timer);
+  initSS(trackId, cntEl, dotsEl, keys.length, 2000);
 }
 
 function setText(id, val) {

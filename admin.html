@@ -842,7 +842,11 @@ var allReservations = [];
 function renderReservations(){
   db.ref('reservations').orderByChild('date').once('value',function(snap){
     allReservations=[];
-    snap.forEach(function(c){allReservations.push({id:c.key,...c.val()});});
+    snap.forEach(function(c){
+      var obj = c.val();
+      obj.id = c.key;
+      allReservations.push(obj);
+    });
     allReservations.sort(function(a,b){return b.createdAt>a.createdAt?1:-1;});
     var fSt=document.getElementById('resvFilter').value;
     var fZn=document.getElementById('resvZone').value;
@@ -850,6 +854,10 @@ function renderReservations(){
       return(!fSt||r.status===fSt)&&(!fZn||r.zone===fZn);
     });
     document.getElementById('resvHead').innerHTML='<tr><th>名前</th><th>エリア</th><th>テーブル</th><th>日時</th><th>電話</th><th>状態</th><th>操作</th></tr>';
+    if(!data.length){
+      document.getElementById('resvBody').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem">予約データがありません</td></tr>';
+      return;
+    }
     document.getElementById('resvBody').innerHTML=data.map(function(r){
       return '<tr>'
         +'<td style="font-weight:500">'+(r.name||'')+'</td>'
@@ -1045,19 +1053,39 @@ function renderEntryTable(){
   });
 }
 function createEvent(){
-  var evs=JSON.parse(JSON.stringify(adminData.events||[]));
+  var name = getVal('evName');
+  if(!name){ showToast('イベント名を入力してください'); return; }
+  // eventsが配列かオブジェクトかチェックして配列に変換
+  var rawEvs = adminData.events || [];
+  var evs = [];
+  if(Array.isArray(rawEvs)){
+    evs = JSON.parse(JSON.stringify(rawEvs));
+  } else {
+    Object.keys(rawEvs).forEach(function(k){ evs.push(rawEvs[k]); });
+  }
   var newEv={
-    id:'E'+(evs.length+1).toString().padStart(3,'0'),
-    name:getVal('evName'),type:getVal('evType'),
-    date:getVal('evDate'),time:getVal('evTime'),
-    entry:getVal('evFee'),prize:getVal('evPrize'),
-    max:parseInt(getVal('evMax'))||32,current:0,active:true
+    id:'E'+(Date.now()),
+    name:name,
+    type:getVal('evType'),
+    date:getVal('evDate'),
+    time:getVal('evTime'),
+    entry:getVal('evFee'),
+    prize:getVal('evPrize'),
+    max:parseInt(getVal('evMax'))||32,
+    current:0,
+    active:true
   };
   evs.push(newEv);
-  db.ref('events').set(evs).then(function(){
-    showToast('✅ イベントを作成しました');
-    document.getElementById('eventModal').classList.remove('open');
-  });
+  db.ref('events').set(evs)
+    .then(function(){
+      showToast('✅ イベントを作成しました');
+      document.getElementById('eventModal').classList.remove('open');
+      // フォームをリセット
+      setVal('evName','');setVal('evPrize','');
+    })
+    .catch(function(e){
+      showToast('❌ エラー: ' + e.message);
+    });
 }
 function toggleEvent(i){
   var evs=JSON.parse(JSON.stringify(adminData.events||[]));
