@@ -5,35 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PALACE CLUB — 高田馬場 ビリヤード・ゴルフ・麻雀</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
 <style>
 :root{--gold:#c9a84c;--gold2:#e8c97a;--dark:#06080b;--text:#f0ece4;--muted:#7a8a9a;--green2:#22c55e}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Noto Sans JP',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden}
-
-/* NAV */
 nav{position:fixed;top:0;width:100%;z-index:200;padding:0 2rem;background:rgba(6,8,11,0.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,168,76,0.18);display:flex;align-items:center;justify-content:space-between;height:62px}
 .logo{font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:0.25em;color:var(--gold);text-decoration:none}
 .logo span{color:var(--text)}
 .nav-links{display:flex;gap:0;list-style:none}
-/* PC専用: height/display はPC(769px以上)のみ適用 */
 .nav-links a{color:var(--muted);text-decoration:none;font-size:0.78rem;letter-spacing:0.08em;padding:0 1rem;border-bottom:2px solid transparent;transition:all 0.25s}
-@media(min-width:769px){
-  .nav-links a{display:flex;align-items:center;height:62px}
-  .nav-btn{height:36px!important;padding:0 1.2rem!important}
-}
+@media(min-width:769px){.nav-links a{display:flex;align-items:center;height:62px}.nav-btn{height:36px!important;padding:0 1.2rem!important}}
 .nav-links a:hover,.nav-links a.active{color:var(--gold);border-bottom-color:var(--gold)}
 .nav-btn{background:var(--gold);color:#06080b!important;font-weight:700;border-radius:2px;border-bottom:none!important;margin-left:0.8rem}
 .nav-btn:hover{background:var(--gold2)!important}
-/* ハンバーガー — デフォルト非表示 */
 .hbg{display:none;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;padding:8px}
 .hbg span{display:block;width:24px;height:2px;background:var(--gold);border-radius:2px;transition:all 0.3s}
-
-/* 横スクロール全体防止 */
-html{overflow-x:hidden}
-body{overflow-x:hidden;max-width:100vw}
-
-/* COMMON */
 .sec-label{font-size:0.65rem;letter-spacing:0.4em;color:var(--gold);margin-bottom:0.8rem;text-transform:uppercase}
 .sec-title{font-family:'Playfair Display';font-size:clamp(1.8rem,4vw,3rem);line-height:1.2;margin-bottom:1rem}
 .sec-title em{font-style:italic;color:var(--gold)}
@@ -44,21 +36,15 @@ body{overflow-x:hidden;max-width:100vw}
 .btn-out:hover{border-color:var(--gold);background:rgba(201,168,76,0.08)}
 .reveal{opacity:0;transform:translateY(20px);transition:all 0.7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
-
-/* PRICE TABLE */
 .ptbl{width:100%;border-collapse:collapse;margin-top:1.5rem}
 .ptbl th{background:rgba(201,168,76,0.1);color:var(--gold);padding:0.7rem 1rem;text-align:left;font-size:0.78rem;border-bottom:1px solid rgba(201,168,76,0.3)}
 .ptbl td{padding:0.7rem 1rem;font-size:0.85rem;border-bottom:1px solid rgba(255,255,255,0.05)}
 .ptbl tr:hover td{background:rgba(255,255,255,0.02)}
 .hp{color:var(--gold);font-weight:700;font-family:'Bebas Neue';font-size:1.2rem}
-
-/* ACCESS */
 .acc-item{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.2rem}
 .acc-icon{width:40px;height:40px;border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .acc-text strong{display:block;color:var(--gold);font-size:0.72rem;letter-spacing:0.1em;margin-bottom:0.2rem}
 .acc-text span{font-size:0.83rem;color:var(--muted);line-height:1.7}
-
-/* SLIDESHOW */
 .slideshow{position:relative;overflow:hidden;border:1px solid rgba(201,168,76,0.25);background:#0a0c10}
 .slide-track{display:flex;height:100%;transition:transform 0.55s cubic-bezier(0.77,0,0.18,1)}
 .slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;position:relative}
@@ -69,8 +55,7 @@ body{overflow-x:hidden;max-width:100vw}
 .dot{width:7px;height:7px;border-radius:50%;background:rgba(201,168,76,0.3);cursor:pointer;transition:all 0.3s}
 .dot.active{background:var(--gold);transform:scale(1.35)}
 .s-cnt{position:absolute;top:0.6rem;right:0.6rem;background:rgba(0,0,0,0.6);color:var(--gold);font-size:0.7rem;padding:0.2rem 0.6rem;font-family:'Bebas Neue';z-index:5}
-
-/* SLIDE COLORS */
+/* Slide colors */
 .sc0{background:linear-gradient(150deg,#0d0a05,#2a1f08)}.sc1{background:linear-gradient(150deg,#050a14,#0d1f38)}
 .sc2{background:linear-gradient(150deg,#140505,#2e0e0e)}.sc3{background:linear-gradient(150deg,#06080a,#101828)}
 .sc4{background:linear-gradient(150deg,#0a0805,#201808)}.sc5{background:linear-gradient(150deg,#08050a,#180e22)}
@@ -80,27 +65,23 @@ body{overflow-x:hidden;max-width:100vw}
 .sg2{background:linear-gradient(150deg,#04140a,#082a14)}.sg3{background:linear-gradient(150deg,#0a1808,#143010)}.sg4{background:linear-gradient(150deg,#041008,#0a2010)}
 .sm0{background:linear-gradient(150deg,#041520,#083040)}.sm1{background:linear-gradient(150deg,#100430,#200860)}
 .sm2{background:linear-gradient(150deg,#040a20,#081540)}.sm3{background:linear-gradient(150deg,#200410,#400820)}.sm4{background:linear-gradient(150deg,#041020,#081a35)}
-
 /* HOME */
 #home{position:relative;padding-top:62px;overflow:hidden;background:#0a0c0f}
 .lux-bg{position:absolute;inset:0;z-index:0;pointer-events:none;transition:background 4s ease}
 .lux-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
 @keyframes particleDrift{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:0.7}90%{opacity:0.4}100%{transform:translateY(-10vh) scale(1.2);opacity:0}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
-
 /* GOLF */
 #golf{background:linear-gradient(180deg,#060c08,#04100a,#060c08);padding:6rem 2rem}
 .golf-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
 .equip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem}
 .equip-card{background:rgba(0,0,0,0.35);border:1px solid rgba(34,197,94,0.15);padding:1.2rem;text-align:center;transition:all 0.3s}
 .equip-card:hover{border-color:rgba(34,197,94,0.4);transform:translateY(-3px)}
-
 /* MAHJONG */
 #mahjong{background:linear-gradient(135deg,rgba(8,14,22,0.97),rgba(5,10,18,0.98));padding:6rem 2rem}
 .mj-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
 .mj-concept{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
 .mj-card{border:1px solid rgba(34,197,94,0.2);padding:1.5rem;background:rgba(0,0,0,0.3);text-align:center}
-
 /* EVENTS */
 #events{padding:6rem 2rem;background:rgba(16,24,32,0.95)}
 .ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
@@ -110,20 +91,16 @@ body{overflow-x:hidden;max-width:100vw}
 .ev-type{font-size:0.62rem;letter-spacing:0.2em;color:var(--gold);margin-bottom:0.4rem}
 .ev-name{font-family:'Playfair Display';font-size:1.2rem;line-height:1.3}
 .ev-body{padding:1.5rem}
-.ev-meta{margin-bottom:1.2rem}
 .ev-row{display:flex;gap:0.5rem;font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem}
 .ev-row span:first-child{color:var(--gold);width:70px;flex-shrink:0}
 .ev-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:0.6rem 0.8rem;font-family:'Noto Sans JP';font-size:0.82rem;outline:none;margin-top:0.4rem}
 .ev-input:focus{border-color:var(--gold)}
 .ev-btn{width:100%;background:var(--gold);color:#06080b;padding:0.7rem;font-weight:700;font-size:0.82rem;border:none;cursor:pointer;letter-spacing:0.1em;margin-top:0.5rem;transition:all 0.3s}
 .ev-btn:hover{background:var(--gold2)}
-
 /* GALLERY + RESERVATION */
-#gallery{padding:6rem 2rem;background:#040508}
+#gallery{padding:6rem 2rem;background:#040508;overflow:hidden}
 .gr-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
-
-/* AREA MAP */
-.area-map{width:100%;max-width:100%;aspect-ratio:16/10;background:linear-gradient(135deg,#0d1a12,#0a1508);border:2px solid rgba(201,168,76,0.3);position:relative;overflow:hidden;cursor:pointer}
+.area-map{width:100%;max-width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#0d1a12,#0a1508);border:2px solid rgba(201,168,76,0.3);position:relative;overflow:hidden;cursor:pointer}
 .area-zone{position:absolute;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.3rem;cursor:pointer;transition:all 0.3s;text-align:center}
 .area-zone:hover{border-color:var(--gold);background:rgba(201,168,76,0.1)!important}
 .az-lbl{font-size:0.68rem;color:var(--gold);letter-spacing:0.1em;font-weight:600}
@@ -132,30 +109,16 @@ body{overflow-x:hidden;max-width:100vw}
 .z-golf{top:10%;left:55%;width:40%;height:40%;background:rgba(10,50,20,0.3)}
 .z-mj{top:55%;left:55%;width:40%;height:35%;background:rgba(20,10,50,0.3)}
 .z-ent{top:70%;left:5%;width:45%;height:20%;background:rgba(201,168,76,0.06)}
-.photo-viewer{background:rgba(16,24,32,0.8);border:1px solid rgba(201,168,76,0.2);padding:1rem;margin-top:0.8rem}
-.pv-title{font-size:0.78rem;color:var(--gold);letter-spacing:0.12em;margin-bottom:0.7rem}
-.mini-slides{display:flex;gap:0.5rem;overflow-x:auto;padding-bottom:0.3rem}
-.mini-slide{width:110px;height:75px;flex-shrink:0;border:2px solid transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:all 0.3s}
-.mini-slide.active{border-color:var(--gold)}
-.music-bar-wrap{display:flex;align-items:center;gap:1rem;background:rgba(0,0,0,0.5);border:1px solid rgba(201,168,76,0.2);padding:0.8rem 1rem;margin-top:0.8rem}
-.mus-btn{background:var(--gold);color:#06080b;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.mus-info{flex:1}
-.mus-title{font-size:0.78rem;color:var(--text)}
-.mus-sub{font-size:0.68rem;color:var(--muted)}
-.mus-bar{width:100%;height:3px;background:rgba(255,255,255,0.08);margin-top:0.3rem;overflow:hidden}
-.mus-prog{height:100%;background:var(--gold);width:0%}
-
-/* RESERVATION FORM */
-.res-ph{display:none}
-.res-panel{display:block;border:1px solid rgba(201,168,76,0.25);background:rgba(10,12,16,0.85);position:sticky;top:70px;overflow:visible}
-.res-panel-head{background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.15);padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between}
-.res-zone-title{font-family:'Playfair Display';font-size:0.95rem;color:var(--gold)}
+/* RESERVATION */
+.res-panel{display:block;border:1px solid rgba(201,168,76,0.25);background:rgba(10,12,16,0.85);position:sticky;top:70px}
+.res-panel-head{background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.15);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.res-zone-title{font-family:'Playfair Display';font-size:1rem;color:var(--gold)}
 .res-close{background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer}
-.res-body{padding:1.2rem}
+.res-body{padding:1.5rem}
 .res-lbl{font-size:0.68rem;letter-spacing:0.12em;color:var(--gold);display:block;margin-bottom:0.4rem}
-.res-input,.res-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:0.6rem 0.8rem;font-family:'Noto Sans JP';font-size:0.83rem;outline:none;margin-bottom:0.7rem}
+.res-input,.res-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:0.7rem 1rem;font-family:'Noto Sans JP';font-size:0.83rem;outline:none;margin-bottom:0.8rem}
 .res-input:focus,.res-select:focus{border-color:var(--gold)}
-.res-row{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
+.res-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
 .tbl-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:1rem}
 .tbl-btn{padding:0.4rem 0;font-size:0.7rem;border:1px solid rgba(201,168,76,0.3);background:rgba(201,168,76,0.06);color:var(--gold);cursor:pointer;border-radius:2px;transition:all 0.2s}
 .tbl-btn.occ{border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#ef4444;cursor:not-allowed}
@@ -164,7 +127,6 @@ body{overflow-x:hidden;max-width:100vw}
 .res-confirm{display:none;margin-top:1rem;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.25);padding:1.2rem;text-align:center}
 .res-confirm-ok{color:var(--green2);font-size:1rem;margin-bottom:0.5rem}
 .res-confirm-detail{font-size:0.8rem;color:var(--text);line-height:1.9;margin-bottom:0.5rem}
-
 /* FOOTER */
 footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4rem 2rem 2rem}
 .ft-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem}
@@ -176,144 +138,67 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
 .ft-links a{font-size:0.82rem;color:var(--muted);text-decoration:none;transition:color 0.2s}
 .ft-links a:hover{color:var(--gold)}
 .ft-bottom{max-width:1200px;margin:3rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;font-size:0.7rem;color:rgba(138,155,170,0.4)}
-
-/* TOAST */
 .toast{position:fixed;bottom:2rem;right:2rem;z-index:500;background:var(--green2);color:#fff;padding:0.8rem 1.5rem;font-size:0.85rem;transform:translateY(100px);opacity:0;transition:all 0.4s}
 .toast.show{transform:translateY(0);opacity:1}
+/* Loading overlay */
+#fb-loading{position:fixed;inset:0;background:var(--dark);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem}
+.fb-spin{width:40px;height:40px;border:3px solid rgba(201,168,76,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* ============================================================
-   MOBILE (max-width: 768px)
+   MOBILE
    ============================================================ */
 @media(max-width:768px){
-
-  /* ── NAV ── */
   nav{padding:0 1rem;height:54px}
   .logo{font-size:1.1rem}
-  .nav-links{display:none!important}
+  .nav-links{display:none}
   .hbg{display:flex!important}
   .hbg.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
   .hbg.open span:nth-child(2){opacity:0}
   .hbg.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
-
-  /* ── MENU OPEN: 画面全体を覆う ── */
-  ul#navLinks.open{
-    display:block!important;
-    position:fixed!important;
-    inset:54px 0 0 0!important;
-    width:100vw!important;
-    height:calc(100vh - 54px)!important;
-    background:#0a0b0e!important;
-    z-index:99999!important;
-    overflow-y:auto!important;
-    padding:0!important;
-    margin:0!important;
-    list-style:none!important
-  }
-  ul#navLinks.open > li{
-    display:block!important;
-    width:100%!important;
-    border-bottom:1px solid rgba(201,168,76,0.12)!important
-  }
-  ul#navLinks.open > li > a{
-    display:block!important;
-    width:100%!important;
-    height:56px!important;
-    line-height:56px!important;
-    padding:0 24px!important;
-    font-size:16px!important;
-    color:#f0ece4!important;
-    text-decoration:none!important;
-    background:none!important;
-    border:none!important;
-    letter-spacing:0.05em!important;
-    white-space:nowrap!important
-  }
-  ul#navLinks.open > li:last-child > a{
-    display:flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-    height:52px!important;
-    line-height:1!important;
-    margin:16px!important;
-    width:calc(100vw - 32px)!important;
-    background:#c9a84c!important;
-    color:#06080b!important;
-    border-radius:4px!important;
-    padding:0!important;
-    font-weight:700!important
-  }
-
-  /* ── 横スクロール防止（メニューとは独立） ── */
+  ul#navLinks.open{display:block!important;position:fixed!important;inset:54px 0 0 0!important;width:100vw!important;height:calc(100vh - 54px)!important;background:#0a0b0e!important;z-index:99999!important;overflow-y:auto!important;padding:0!important;margin:0!important;list-style:none!important}
+  ul#navLinks.open>li{display:block!important;width:100%!important;border-bottom:1px solid rgba(201,168,76,0.12)!important}
+  ul#navLinks.open>li>a{display:block!important;width:100%!important;height:56px!important;line-height:56px!important;padding:0 24px!important;font-size:16px!important;color:#f0ece4!important;text-decoration:none!important;background:none!important;border:none!important}
+  ul#navLinks.open>li:last-child>a{display:flex!important;align-items:center!important;justify-content:center!important;height:52px!important;line-height:1!important;margin:16px!important;width:calc(100vw - 32px)!important;background:#c9a84c!important;color:#06080b!important;border-radius:4px!important;padding:0!important;font-weight:700!important}
   body{overflow-x:clip}
-
-  /* ── SECTIONS ── */
   #home{padding-top:54px}
-  section{overflow:hidden!important;width:100vw!important;max-width:100vw!important;box-sizing:border-box!important}
-  section > div{padding:3rem 16px!important;max-width:100%!important;box-sizing:border-box!important;overflow:hidden!important}
-
-  /* ── AREA MAP: 確実に画面内に収める ── */
-  #gallery,#gallery>div,#gallery .gr-grid,#gallery .gr-grid>div{
-    width:100%!important;max-width:100%!important;overflow:hidden!important;box-sizing:border-box!important
-  }
-
-  /* ── ALL 2-COL GRIDS → 1COL ── */
+  section>div{padding:3rem 16px!important;max-width:100%!important;box-sizing:border-box!important}
   .golf-grid,.mj-grid,.gr-grid,.mj-concept,.ev-grid,.ft-inner{grid-template-columns:1fr!important;gap:1.5rem!important}
   [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;gap:1.5rem!important}
   .equip-grid{grid-template-columns:1fr 1fr!important}
   [style*="position:sticky"]{position:static!important}
   .res-row{grid-template-columns:1fr!important}
-
-  /* ── GALLERY: スマホではエリア図の下に予約フォームを常に表示 ── */
-  .gr-grid{grid-template-columns:1fr!important;gap:1.5rem!important}
-  #resPh{display:none!important}
-  #resPanel{
-    display:block!important;
-    border:1px solid rgba(201,168,76,0.25)!important;
-    background:rgba(10,12,16,0.85)!important;
-    margin-top:1rem!important
-  }
-  /* ── GALLERY SECTION ── */
-  .gallery-inner{padding:3rem 0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
-  #gallery .gr-grid{padding:0 16px!important;box-sizing:border-box!important;width:100%!important}
-  #gallery .gr-grid > div{width:100%!important;min-width:0!important;overflow:hidden!important}
-
-  /* ── AREA MAP ── */
-  .area-map{
-    width:100%!important;
-    max-width:100%!important;
-    aspect-ratio:4/3!important;
-    min-height:unset!important;
-    overflow:hidden!important;
-    margin-left:0!important;
-    margin-right:0!important
-  }
+  .area-map{width:100%!important;max-width:100%!important;aspect-ratio:4/3!important;min-height:unset!important;overflow:hidden!important}
   .z-bill{top:8%;left:3%;width:54%;height:50%}
   .z-golf{top:8%;left:61%;width:35%;height:36%}
   .z-mj{top:51%;left:61%;width:35%;height:30%}
   .z-ent{top:65%;left:3%;width:54%;height:20%}
   .az-lbl{font-size:0.6rem}.az-sub{display:none}
-
-  /* ── 予約フォーム ── */
-  .res-ph,.res-panel{margin-top:1rem!important;width:100%!important;box-sizing:border-box!important}
-
-  /* ── MISC ── */
-  .mini-slide{width:80px;height:55px}
   .ptbl{font-size:0.8rem}.ptbl td,.ptbl th{padding:0.5rem}
   footer{padding:3rem 16px 2rem}
   .ft-bottom{flex-direction:column;gap:0.4rem;text-align:center}
   h1{font-size:2rem!important}
   .tbl-grid{grid-template-columns:repeat(6,1fr)!important}
-
+  /* スマホ: 予約フォームを下部シートで表示 */
+  #resPanel{position:fixed!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;max-height:80vh!important;overflow-y:auto!important;z-index:1000!important;border-top:2px solid var(--gold)!important;background:#0d0f12!important;display:none!important;top:auto!important}
+  #resPanel.open-mobile{display:block!important}
+  #resOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999}
+  #resOverlay.show{display:block}
 }
-
 @media(max-width:400px){.equip-grid{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
 
+<!-- Loading -->
+<div id="fb-loading">
+  <div class="fb-spin"></div>
+  <div style="font-size:0.8rem;color:var(--muted)">読み込み中...</div>
+</div>
+
 <!-- NAV -->
 <nav>
-  <a href="#home" class="logo">PALACE <span>CLUB</span></a>
+  <a href="#home" class="logo">PALACE <span id="shopNameNav">CLUB</span></a>
   <ul class="nav-links" id="navLinks">
     <li><a href="#home" class="active" onclick="sa(this);cn()">🎱 ビリヤード</a></li>
     <li><a href="#golf"    onclick="sa(this);cn()">⛳ ゴルフ</a></li>
@@ -322,9 +207,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
     <li><a href="#events"  onclick="sa(this);cn()">🏆 イベント</a></li>
     <li><a href="#gallery" class="nav-btn" onclick="sa(this);cn()">予約する</a></li>
   </ul>
-  <div class="hbg" id="hbg" onclick="tn()">
-    <span></span><span></span><span></span>
-  </div>
+  <div class="hbg" id="hbg" onclick="tn()"><span></span><span></span><span></span></div>
 </nav>
 
 <!-- HOME / BILLIARD -->
@@ -332,14 +215,11 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   <div class="lux-bg" id="luxBg"></div>
   <canvas class="lux-canvas" id="luxCanvas"></canvas>
   <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:3.5rem 2rem 2rem">
-
     <div style="text-align:center;animation:fadeUp 0.9s ease 0.1s both">
-      <div style="display:inline-block;border:1px solid rgba(201,168,76,0.5);color:var(--gold);padding:0.3rem 2rem;font-size:0.65rem;letter-spacing:0.5em;text-transform:uppercase;margin-bottom:1.5rem">
-        高田馬場 — Tokyo Premier Club
-      </div>
+      <div style="display:inline-block;border:1px solid rgba(201,168,76,0.5);color:var(--gold);padding:0.3rem 2rem;font-size:0.65rem;letter-spacing:0.5em;text-transform:uppercase;margin-bottom:1.5rem" id="shopCatch">高田馬場 — Tokyo Premier Club</div>
     </div>
     <div style="text-align:center;animation:fadeUp 0.9s ease 0.25s both">
-      <div style="font-family:'Bebas Neue';font-size:0.9rem;letter-spacing:0.5em;color:rgba(201,168,76,0.6);margin-bottom:0.4rem">PALACE CLUB</div>
+      <div style="font-family:'Bebas Neue';font-size:0.9rem;letter-spacing:0.5em;color:rgba(201,168,76,0.6);margin-bottom:0.4rem" id="shopNameHero">PALACE CLUB</div>
       <h1 style="font-family:'Playfair Display';font-size:clamp(2rem,5.5vw,4.5rem);font-weight:700;line-height:1.15;color:var(--text)">
         チャイニーズ８専門店<br>
         <em style="font-style:italic;color:var(--gold);text-shadow:0 0 40px rgba(201,168,76,0.35)">日本最大級 — 高田馬場</em>
@@ -348,27 +228,26 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:1.8rem 0;animation:fadeUp 0.9s ease 0.4s both">
       <div style="border:1px solid rgba(201,168,76,0.35);padding:0.5rem 1.3rem;font-size:0.75rem;letter-spacing:0.2em;color:var(--gold)">🎱 チャイニーズ８</div>
       <div style="border:1px solid rgba(201,168,76,0.35);padding:0.5rem 1.3rem;font-size:0.75rem;letter-spacing:0.2em;color:var(--gold)">🗾 日本最大級 17台</div>
-      <div style="border:1px solid rgba(201,168,76,0.35);padding:0.5rem 1.3rem;font-size:0.75rem;letter-spacing:0.2em;color:var(--gold)">📍 高田馬場駅 徒歩2分</div>
+      <div style="border:1px solid rgba(201,168,76,0.35);padding:0.5rem 1.3rem;font-size:0.75rem;letter-spacing:0.2em;color:var(--gold)" id="accessBadge">📍 高田馬場駅 徒歩2分</div>
     </div>
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.9s ease 0.55s both;margin-bottom:2rem">
       <a href="#gallery" class="btn-gold">ご予約はこちら</a>
       <a href="#gallery" class="btn-out">店内を見る</a>
     </div>
-
     <!-- スライドショー -->
     <div style="animation:fadeUp 0.9s ease 0.7s both">
       <div class="slideshow" id="sl0" style="aspect-ratio:16/7;border-radius:6px">
         <div class="slide-track" id="tr0">
           <div class="slide sc0"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(201,168,76,0.6))">🎱</span><div class="slide-lbl">CHINESE 8 BALL — 17台</div></div>
-          <div class="slide sc1"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(100,160,255,0.5))">🏆</span><div class="slide-lbl" style="color:#a8c8ff">TOURNAMENT</div></div>
-          <div class="slide sc2"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(255,100,100,0.5))">🥃</span><div class="slide-lbl" style="color:#ffb8b8">BAR LOUNGE</div></div>
-          <div class="slide sc3"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(201,168,76,0.6))">💎</span><div class="slide-lbl">VIP ROOM</div></div>
-          <div class="slide sc4"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(180,140,255,0.5))">⛳</span><div class="slide-lbl" style="color:#d4b8ff">GOLF SIMULATOR</div></div>
-          <div class="slide sc5"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(100,220,180,0.5))">🀄</span><div class="slide-lbl" style="color:#88e8cc">MAHJONG CLUB</div></div>
-          <div class="slide sc6"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(201,168,76,0.6))">🌙</span><div class="slide-lbl">NIGHT SESSION</div></div>
-          <div class="slide sc7"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(200,220,255,0.5))">🏙</span><div class="slide-lbl" style="color:#c8dcff">TAKADANOBABA</div></div>
-          <div class="slide sc8"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(255,200,100,0.5))">🎯</span><div class="slide-lbl" style="color:#ffd888">PRACTICE AREA</div></div>
-          <div class="slide sc9"><span style="font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(180,255,220,0.5))">✨</span><div class="slide-lbl" style="color:#b4ffdc">MEMBER'S CLUB</div></div>
+          <div class="slide sc1"><span style="font-size:3.5rem">🏆</span><div class="slide-lbl" style="color:#a8c8ff">TOURNAMENT</div></div>
+          <div class="slide sc2"><span style="font-size:3.5rem">🥃</span><div class="slide-lbl" style="color:#ffb8b8">BAR LOUNGE</div></div>
+          <div class="slide sc3"><span style="font-size:3.5rem">💎</span><div class="slide-lbl">VIP ROOM</div></div>
+          <div class="slide sc4"><span style="font-size:3.5rem">⛳</span><div class="slide-lbl" style="color:#d4b8ff">GOLF SIMULATOR</div></div>
+          <div class="slide sc5"><span style="font-size:3.5rem">🀄</span><div class="slide-lbl" style="color:#88e8cc">MAHJONG CLUB</div></div>
+          <div class="slide sc6"><span style="font-size:3.5rem">🌙</span><div class="slide-lbl">NIGHT SESSION</div></div>
+          <div class="slide sc7"><span style="font-size:3.5rem">🏙</span><div class="slide-lbl" style="color:#c8dcff">TAKADANOBABA</div></div>
+          <div class="slide sc8"><span style="font-size:3.5rem">🎯</span><div class="slide-lbl" style="color:#ffd888">PRACTICE AREA</div></div>
+          <div class="slide sc9"><span style="font-size:3.5rem">✨</span><div class="slide-lbl" style="color:#b4ffdc">MEMBER'S CLUB</div></div>
         </div>
         <div class="s-arr s-prev" onclick="sp('tr0')">&#8249;</div>
         <div class="s-arr s-next" onclick="sn('tr0')">&#8250;</div>
@@ -376,36 +255,29 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
         <div class="s-dots" id="dots0"></div>
       </div>
     </div>
-
     <!-- 詳細 + 地図 -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem;align-items:start" class="reveal">
       <div style="border:1px solid rgba(201,168,76,0.2);padding:2rem;background:rgba(10,12,16,0.7)">
         <div class="sec-label">Billiard Club</div>
         <h2 class="sec-title" style="font-size:1.6rem">チャイニーズ８専門店<br><em>日本最大級 17台</em></h2>
         <div class="divider"></div>
-        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.5rem">高田馬場という都心の好立地に、チャイニーズ８専門店として日本最大規模の17台を設置。プロ仕様のテーブルで初心者からプロまで楽しめます。</p>
-        <table class="ptbl">
+        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.5rem" id="shopDesc">高田馬場という都心の好立地に、チャイニーズ８専門店として日本最大規模の17台を設置。</p>
+        <table class="ptbl" id="billPriceTable">
           <thead><tr><th>プラン</th><th>料金</th><th>備考</th></tr></thead>
-          <tbody>
-            <tr><td>スタンダード</td><td class="hp">¥800</td><td style="color:var(--muted);font-size:0.78rem">/30分</td></tr>
-            <tr><td>1時間パック</td><td class="hp">¥1,400</td><td style="color:var(--muted);font-size:0.78rem">/1時間</td></tr>
-            <tr><td>プレミアム月額</td><td class="hp">¥9,800</td><td style="color:var(--muted);font-size:0.78rem">/月・40時間</td></tr>
-            <tr><td>グループ(2台〜)</td><td class="hp">¥2,800</td><td style="color:var(--muted);font-size:0.78rem">/時間/台</td></tr>
-            <tr><td>学生割引</td><td class="hp">¥600</td><td style="color:var(--muted);font-size:0.78rem">/30分</td></tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
       <div style="border:1px solid rgba(201,168,76,0.2);padding:2rem;background:rgba(10,12,16,0.7)">
         <div class="sec-label">Access &amp; Map</div>
         <div style="width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0a1018,#060c14);border:1px solid rgba(201,168,76,0.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;margin-bottom:1.2rem">
           <div style="font-size:2.5rem">📍</div>
-          <div style="font-family:'Bebas Neue';font-size:1rem;color:var(--gold);letter-spacing:0.2em">高田馬場駅 徒歩2分</div>
-          <a href="https://maps.google.com/?q=高田馬場駅" target="_blank" style="font-size:0.72rem;color:var(--muted);border-bottom:1px solid rgba(201,168,76,0.25);text-decoration:none;padding-bottom:2px">Googleマップで開く →</a>
+          <div style="font-family:'Bebas Neue';font-size:1rem;color:var(--gold);letter-spacing:0.2em" id="accessStation">高田馬場駅 徒歩2分</div>
+          <a id="mapLink" href="https://maps.google.com/?q=高田馬場駅" target="_blank" style="font-size:0.72rem;color:var(--muted);border-bottom:1px solid rgba(201,168,76,0.25);text-decoration:none;padding-bottom:2px">Googleマップで開く →</a>
         </div>
-        <div class="acc-item"><div class="acc-icon">📍</div><div class="acc-text"><strong>住所</strong><span>東京都新宿区高田馬場X-X-X ○○ビル B1F〜3F</span></div></div>
-        <div class="acc-item"><div class="acc-icon">🚃</div><div class="acc-text"><strong>アクセス</strong><span>JR山手線・西武新宿線・東京メトロ東西線「高田馬場駅」徒歩2分</span></div></div>
-        <div class="acc-item"><div class="acc-icon">🕐</div><div class="acc-text"><strong>営業時間</strong><span>平日 13:00〜25:00 / 土日祝 10:00〜翌5:00</span></div></div>
-        <div class="acc-item"><div class="acc-icon">📞</div><div class="acc-text"><strong>電話</strong><span>03-XXXX-XXXX</span></div></div>
+        <div class="acc-item"><div class="acc-icon">📍</div><div class="acc-text"><strong>住所</strong><span id="shopAddress">東京都新宿区高田馬場X-X-X ○○ビル B1F〜3F</span></div></div>
+        <div class="acc-item"><div class="acc-icon">🚃</div><div class="acc-text"><strong>アクセス</strong><span id="shopAccess">JR山手線・西武新宿線・東京メトロ東西線「高田馬場駅」徒歩2分</span></div></div>
+        <div class="acc-item"><div class="acc-icon">🕐</div><div class="acc-text"><strong>営業時間</strong><span id="shopHours">平日 13:00〜25:00 / 土日祝 10:00〜翌5:00</span></div></div>
+        <div class="acc-item"><div class="acc-icon">📞</div><div class="acc-text"><strong>電話</strong><span id="shopTel">03-XXXX-XXXX</span></div></div>
       </div>
     </div>
   </div>
@@ -438,14 +310,9 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
       <div>
         <h3 style="font-family:'Playfair Display';font-size:1.4rem;color:var(--gold);margin-bottom:1rem">高品質な練習環境</h3>
         <p style="font-size:0.85rem;color:var(--muted);line-height:1.9;margin-bottom:1.5rem">最新のゴルフシミュレーターと本格的な練習設備を完備。天候に関係なく年中快適に練習できます。</p>
-        <table class="ptbl">
+        <table class="ptbl" id="golfPriceTable">
           <thead><tr><th>プラン</th><th>料金</th></tr></thead>
-          <tbody>
-            <tr><td>30分パック</td><td class="hp">¥1,200</td></tr>
-            <tr><td>1時間パック</td><td class="hp">¥2,000</td></tr>
-            <tr><td>月額プラン</td><td class="hp">¥15,800<span style="font-size:0.75rem;color:var(--muted)">/月</span></td></tr>
-            <tr><td>レッスン付き</td><td class="hp">¥3,500<span style="font-size:0.75rem;color:var(--muted)">/時間</span></td></tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </div>
@@ -486,13 +353,9 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
       </div>
       <div>
         <p style="font-size:0.9rem;color:var(--muted);line-height:1.9;margin-bottom:2rem">中国の伝統文化が漂う優雅な空間で、日常を忘れてゆったりと麻雀を楽しめます。初心者から上級者まで歓迎です。</p>
-        <table class="ptbl" style="border:1px solid rgba(34,197,94,0.15)">
+        <table class="ptbl" id="mjPriceTable" style="border:1px solid rgba(34,197,94,0.15)">
           <thead><tr><th style="color:#22c55e;background:rgba(34,197,94,0.08)">プラン</th><th style="color:#22c55e;background:rgba(34,197,94,0.08)">料金</th><th style="color:#22c55e;background:rgba(34,197,94,0.08)">備考</th></tr></thead>
-          <tbody>
-            <tr><td>1時間</td><td class="hp" style="color:#22c55e">¥500</td><td style="color:var(--muted);font-size:0.78rem">/人</td></tr>
-            <tr><td>半荘</td><td class="hp" style="color:#22c55e">¥300</td><td style="color:var(--muted);font-size:0.78rem">/人</td></tr>
-            <tr><td>貸し切り(4時間)</td><td class="hp" style="color:#22c55e">¥4,000</td><td style="color:var(--muted);font-size:0.78rem">/卓</td></tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </div>
@@ -512,13 +375,15 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
       <h2 class="sec-title">最新<em>イベント情報</em></h2>
       <div class="divider"></div>
     </div>
-    <div class="ev-grid reveal" id="evGrid"></div>
+    <div class="ev-grid reveal" id="evGrid">
+      <div style="text-align:center;padding:3rem;color:var(--muted)">イベント情報を読み込み中...</div>
+    </div>
   </div>
 </section>
 
 <!-- GALLERY + RESERVATION -->
-<section id="gallery" style="overflow:hidden">
-  <div class="gallery-inner" style="max-width:1100px;margin:0 auto;padding:6rem 2rem;box-sizing:border-box;width:100%">
+<section id="gallery">
+  <div style="max-width:1100px;margin:0 auto;padding:6rem 2rem;box-sizing:border-box;width:100%">
     <div style="text-align:center;margin-bottom:2.5rem" class="reveal">
       <div class="sec-label">Gallery &amp; Reservation</div>
       <h2 class="sec-title" style="text-align:center">店内エリア図<em> &amp; ご予約</em></h2>
@@ -526,37 +391,34 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
       <p style="color:var(--muted);font-size:0.83rem;margin-top:0.8rem">エリアをクリックすると予約フォームが表示されます</p>
     </div>
     <div class="gr-grid reveal">
-      <!-- LEFT -->
       <div>
         <div class="area-map" id="areaMap">
           <div style="position:absolute;top:0.4rem;left:50%;transform:translateX(-50%);font-size:0.55rem;color:rgba(201,168,76,0.3);letter-spacing:0.2em">FLOOR MAP</div>
-          <div class="area-zone z-bill" onmouseenter="showPhotos('billiard')" onclick="openForm('billiard','🎱 ビリヤードエリア')">
+          <div class="area-zone z-bill" onclick="openForm('billiard','🎱 ビリヤードエリア')">
             <div style="font-size:1.8rem">🎱</div>
             <div class="az-lbl">BILLIARD</div>
             <div class="az-sub">17台 — タップで予約</div>
           </div>
-          <div class="area-zone z-golf" onmouseenter="showPhotos('golf')" onclick="openForm('golf','⛳ ゴルフエリア')">
+          <div class="area-zone z-golf" onclick="openForm('golf','⛳ ゴルフエリア')">
             <div style="font-size:1.6rem">⛳</div>
             <div class="az-lbl">GOLF</div>
             <div class="az-sub">室内練習場</div>
           </div>
-          <div class="area-zone z-mj" onmouseenter="showPhotos('mahjong')" onclick="openForm('mahjong','🀄 麻雀エリア')">
+          <div class="area-zone z-mj" onclick="openForm('mahjong','🀄 麻雀エリア')">
             <div style="font-size:1.6rem">🀄</div>
             <div class="az-lbl">MAHJONG</div>
             <div class="az-sub">麻雀クラブ</div>
           </div>
-          <div class="area-zone z-ent" onmouseenter="showPhotos('entrance')" onclick="showPhotos('entrance')">
+          <div class="area-zone z-ent">
             <div style="font-size:1.2rem">🚪</div>
             <div class="az-lbl" style="font-size:0.55rem">ENTRANCE / LOUNGE</div>
           </div>
         </div>
       </div>
-
-      <!-- RIGHT: 予約フォーム -->
       <div>
         <div class="res-panel" id="resPanel">
           <div class="res-panel-head">
-            <div class="res-zone-title" id="resPanelTitle">エリアを選択</div>
+            <div class="res-zone-title" id="resPanelTitle">エリアを選択してください</div>
             <button class="res-close" onclick="closeForm()">✕</button>
           </div>
           <div class="res-body">
@@ -568,8 +430,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
             <label class="res-lbl">ご利用日</label>
             <input class="res-input" type="date" id="rDate">
             <div class="res-row">
-              <div>
-                <label class="res-lbl">開始時間</label>
+              <div><label class="res-lbl">開始時間</label>
                 <select class="res-select" id="rTime">
                   <option>13:00</option><option>14:00</option><option>15:00</option>
                   <option>16:00</option><option>17:00</option><option>18:00</option>
@@ -577,8 +438,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
                   <option>22:00</option><option>23:00</option>
                 </select>
               </div>
-              <div>
-                <label class="res-lbl">利用時間</label>
+              <div><label class="res-lbl">利用時間</label>
                 <select class="res-select" id="rDur">
                   <option>30分</option><option>1時間</option><option>2時間</option><option>3時間</option>
                 </select>
@@ -592,7 +452,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
             <div class="res-confirm" id="resConf">
               <div class="res-confirm-ok">✅ 予約が完了しました</div>
               <div class="res-confirm-detail" id="resDetail"></div>
-              <p style="font-size:0.75rem;color:var(--muted)">📞 03-XXXX-XXXX</p>
+              <p style="font-size:0.75rem;color:var(--muted)" id="resConfTel">📞 03-XXXX-XXXX</p>
             </div>
           </div>
         </div>
@@ -606,7 +466,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   <div class="ft-inner">
     <div>
       <a href="#home" class="ft-logo">PALACE <span>CLUB</span></a>
-      <p class="ft-desc">高田馬場の最高立地に構える総合エンターテインメントクラブ。ビリヤード・ゴルフ・麻雀が一つ屋根の下に。</p>
+      <p class="ft-desc" id="ftDesc">高田馬場の最高立地に構える総合エンターテインメントクラブ。</p>
     </div>
     <div>
       <div class="ft-h">施設案内</div>
@@ -629,113 +489,226 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
       <div class="ft-h">営業情報</div>
       <ul class="ft-links" style="gap:0.4rem">
         <li style="color:var(--muted);font-size:0.75rem">平日</li>
-        <li style="color:var(--text)">13:00 〜 25:00</li>
+        <li style="color:var(--text)" id="ftHoursWeek">13:00 〜 25:00</li>
         <li style="color:var(--muted);font-size:0.75rem;margin-top:0.4rem">土日祝</li>
-        <li style="color:var(--text)">10:00 〜 翌5:00</li>
-        <li style="color:var(--muted);font-size:0.75rem;margin-top:0.4rem">高田馬場駅 徒歩2分</li>
+        <li style="color:var(--text)" id="ftHoursWeekend">10:00 〜 翌5:00</li>
+        <li style="color:var(--muted);font-size:0.75rem;margin-top:0.4rem" id="ftAccess">高田馬場駅 徒歩2分</li>
       </ul>
     </div>
   </div>
   <div class="ft-bottom">
     <span>© 2025 PALACE CLUB. All rights reserved.</span>
-    <span>東京都新宿区高田馬場X-X-X</span>
+    <span id="ftAddress">東京都新宿区高田馬場X-X-X</span>
   </div>
 </footer>
 
+<div id="resOverlay" onclick="closeForm()"></div>
 <div class="toast" id="toast"></div>
 
 <script>
-/* -------- LUXURY BG -------- */
-(function(){
-  var bg=document.getElementById('luxBg');
-  if(!bg)return;
-  var p=['radial-gradient(ellipse at 20% 50%,#1a1205,#080a0d)','radial-gradient(ellipse at 70% 30%,#05101a,#060810)','radial-gradient(ellipse at 50% 20%,#100a18,#080810)','radial-gradient(ellipse at 10% 60%,#0a1505,#060c08)','radial-gradient(ellipse at 60% 70%,#18120a,#0a0c10)','radial-gradient(ellipse at 30% 40%,#050a14,#060810)','radial-gradient(ellipse at 80% 20%,#0e0e04,#080a08)'];
-  var i=0; bg.style.cssText='position:absolute;inset:0;z-index:0;pointer-events:none;transition:background 4s ease'; bg.style.background=p[0];
-  setInterval(function(){i=(i+1)%p.length;bg.style.background=p[i];},5000);
-  var sec=document.getElementById('home');
-  if(!sec)return;
-  var cols=['rgba(201,168,76,0.7)','rgba(232,201,122,0.5)','rgba(255,235,180,0.4)'];
-  for(var j=0;j<20;j++){var pt=document.createElement('div');var sz=(Math.random()*2+1).toFixed(1);pt.style.cssText='position:absolute;border-radius:50%;pointer-events:none;z-index:1;left:'+Math.random()*100+'%;width:'+sz+'px;height:'+sz+'px;background:'+cols[Math.floor(Math.random()*cols.length)]+';animation:particleDrift '+(Math.random()*20+18).toFixed(0)+'s linear '+(Math.random()*15).toFixed(0)+'s infinite';sec.appendChild(pt);}
-  var cv=document.getElementById('luxCanvas');
-  if(!cv)return;
-  function dg(){var w=cv.offsetWidth,h=cv.offsetHeight;if(!w||!h)return;cv.width=w;cv.height=h;var ctx=cv.getContext('2d');ctx.clearRect(0,0,w,h);ctx.strokeStyle='rgba(201,168,76,0.04)';ctx.lineWidth=1;for(var x=0;x<w;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(var y=0;y<h;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}}
-  setTimeout(dg,200);window.addEventListener('resize',dg);
-})();
+// ================================================================
+// Firebase 初期化
+// ================================================================
+var db, storage;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db      = firebase.database();
+  storage = firebase.storage();
+} catch(e) {
+  console.warn('Firebase init error:', e);
+}
 
-/* -------- NAV -------- */
+// ================================================================
+// ページ読み込み: Firebaseからデータ取得 → 画面反映
+// ================================================================
+window.addEventListener('load', function() {
+  if (db) {
+    // リアルタイムで全データを監視
+    db.ref('/').on('value', function(snap) {
+      var data = snap.val();
+      if (!data) {
+        // 初回: デフォルトデータを書き込み
+        db.ref('/').set(DEFAULT_DATA);
+        data = DEFAULT_DATA;
+      }
+      applyData(data);
+      document.getElementById('fb-loading').style.display = 'none';
+    }, function(err) {
+      console.warn('Firebase read error:', err);
+      // Firebaseエラー時はデフォルトデータで表示
+      applyData(DEFAULT_DATA);
+      document.getElementById('fb-loading').style.display = 'none';
+    });
+  } else {
+    applyData(DEFAULT_DATA);
+    document.getElementById('fb-loading').style.display = 'none';
+  }
+
+  initSS('tr0', document.getElementById('cnt0'), document.getElementById('dots0'), 10, 2000);
+  initSS('tr1', document.getElementById('cnt1'), document.getElementById('dots1'), 5,  2000);
+  initSS('tr2', document.getElementById('cnt2'), document.getElementById('dots2'), 5,  2000);
+  document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('visible'); });
+});
+
+// ================================================================
+// データをページに反映
+// ================================================================
+function applyData(data) {
+  var shop = data.shop || DEFAULT_DATA.shop;
+
+  // 基本情報
+  setText('shopNameNav',    shop.name    || '');
+  setText('shopNameHero',   shop.name    || '');
+  setText('shopCatch',      shop.catchcopy || '');
+  setText('shopDesc',       shop.description || '');
+  setText('shopAddress',    shop.address || '');
+  setText('shopAccess',     shop.access  || '');
+  setText('shopTel',        shop.tel     || '');
+  setText('accessStation',  shop.access  || '');
+  setText('accessBadge',    '📍 ' + (shop.access || ''));
+  setText('ftDesc',         shop.description || '');
+  setText('ftAddress',      shop.address || '');
+  setText('ftHoursWeek',    shop.hours_week    || '');
+  setText('ftHoursWeekend', shop.hours_weekend || '');
+  setText('ftAccess',       shop.access || '');
+  setText('resConfTel',     '📞 ' + (shop.tel || ''));
+  var mLink = document.getElementById('mapLink');
+  if (mLink && shop.mapUrl) mLink.href = shop.mapUrl;
+
+  // 料金プラン
+  renderPriceTable('billPriceTable', (data.plans || {}).billiard || [], true);
+  renderPriceTable('golfPriceTable', (data.plans || {}).golf     || [], false);
+  renderPriceTableMj('mjPriceTable', (data.plans || {}).mahjong  || []);
+
+  // イベント
+  renderEvents(data.events || []);
+
+  // 施設台数（エリア図のサブテキスト更新）
+  var fac = data.facility || {};
+  if (fac.billiard_tables) {
+    var sub = document.querySelector('.z-bill .az-sub');
+    if (sub) sub.textContent = fac.billiard_tables + '台 — タップで予約';
+  }
+
+  // 予約テーブル台数更新
+  window._billTables = fac.billiard_tables || 17;
+}
+
+function setText(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function renderPriceTable(id, plans, hasNote) {
+  var tb = document.getElementById(id);
+  if (!tb) return;
+  var tbody = tb.querySelector('tbody');
+  tbody.innerHTML = plans.map(function(p) {
+    if (hasNote) {
+      return '<tr><td>'+p.name+'</td><td class="hp">'+p.price+'</td><td style="color:var(--muted);font-size:0.78rem">'+p.unit+'</td></tr>';
+    }
+    return '<tr><td>'+p.name+'</td><td class="hp">'+p.price+'<span style="font-size:0.75rem;color:var(--muted)">'+p.unit+'</span></td></tr>';
+  }).join('');
+}
+
+function renderPriceTableMj(id, plans) {
+  var tb = document.getElementById(id);
+  if (!tb) return;
+  var tbody = tb.querySelector('tbody');
+  tbody.innerHTML = plans.map(function(p) {
+    return '<tr><td>'+p.name+'</td><td class="hp" style="color:#22c55e">'+p.price+'</td><td style="color:var(--muted);font-size:0.78rem">'+p.unit+'</td></tr>';
+  }).join('');
+}
+
+function renderEvents(evs) {
+  var grid = document.getElementById('evGrid');
+  if (!grid) return;
+  var active = evs.filter(function(e){ return e.active !== false; });
+  if (!active.length) { grid.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)">現在開催中のイベントはありません</div>'; return; }
+  grid.innerHTML = active.map(function(e, ei) {
+    var pct = Math.round((e.current||0) / (e.max||1) * 100);
+    return '<div class="ev-card">'
+      +'<div class="ev-head"><div class="ev-type">'+(e.type||'')+'</div><div class="ev-name">'+(e.name||'')+'</div></div>'
+      +'<div class="ev-body">'
+        +'<div class="ev-row"><span>📅 日時</span>'+(e.date||'')+' '+(e.time||'')+'</div>'
+        +'<div class="ev-row"><span>💰 参加費</span>'+(e.entry||'')+'</div>'
+        +'<div class="ev-row"><span>🏆 賞金</span>'+(e.prize||'')+'</div>'
+        +'<div class="ev-row"><span>👥 定員</span>'+(e.max||0)+'名（残り'+((e.max||0)-(e.current||0))+'名）</div>'
+        +'<div style="height:4px;background:rgba(255,255,255,0.08);overflow:hidden;margin-bottom:0.3rem"><div style="height:100%;background:var(--gold);width:'+pct+'%"></div></div>'
+        +'<div style="font-size:0.7rem;color:var(--muted);margin-bottom:1rem">エントリー '+(e.current||0)+'/'+(e.max||0)+'名</div>'
+        +'<div style="font-size:0.7rem;color:var(--gold);margin-bottom:0.4rem">エントリー</div>'
+        +'<input class="ev-input" placeholder="お名前" id="en'+ei+'">'
+        +'<input class="ev-input" placeholder="電話番号" id="ep'+ei+'" type="tel">'
+        +'<button class="ev-btn" onclick="subEv(\''+e.id+'\','+ei+')">エントリーする</button>'
+      +'</div></div>';
+  }).join('');
+}
+
+function subEv(evId, ei) {
+  var name  = (document.getElementById('en'+ei)||{}).value||'';
+  var phone = (document.getElementById('ep'+ei)||{}).value||'';
+  if (!name||!phone) { showToast('名前と電話番号を入力してください'); return; }
+  if (db) {
+    // Firebaseにエントリーを保存
+    var entryRef = db.ref('entries').push();
+    entryRef.set({eventId:evId, name:name, phone:phone, date:new Date().toISOString()});
+    // エントリー数を増加
+    db.ref('events').once('value', function(snap) {
+      var evs = snap.val() || [];
+      evs.forEach(function(e, i) {
+        if (e.id === evId) {
+          db.ref('events/'+i+'/current').set(Math.min((e.current||0)+1, e.max||32));
+        }
+      });
+    });
+  }
+  showToast('✅ エントリー完了！');
+}
+
+// ================================================================
+// NAV
+// ================================================================
 function sa(el){document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});el.classList.add('active');}
 function tn(){var n=document.getElementById('navLinks'),h=document.getElementById('hbg');if(!n||!h)return;n.classList.toggle('open');h.classList.toggle('open');}
 function cn(){var n=document.getElementById('navLinks'),h=document.getElementById('hbg');if(!n||!h)return;n.classList.remove('open');h.classList.remove('open');}
 
-/* -------- SLIDESHOW -------- */
+// ================================================================
+// SLIDESHOW
+// ================================================================
 var SS={};
-function initSS(trId,cntId,dotsId,n,iv){
-  var tr=document.getElementById(trId),cnt=document.getElementById(cntId),dots=document.getElementById(dotsId);
-  if(!tr||!cnt||!dots)return;
-  var slides=tr.querySelectorAll('.slide'),total=slides.length,cur=0;
-  if(!total)return;
-  dots.innerHTML='';
-  for(var i=0;i<total;i++){(function(idx){var d=document.createElement('div');d.className='dot'+(idx===0?' active':'');d.onclick=function(){goSS(trId,idx);};dots.appendChild(d);})(i);}
-  function render(){tr.style.transform='translateX(-'+cur*100+'%)';cnt.textContent=(cur+1)+' / '+total;dots.querySelectorAll('.dot').forEach(function(d,i){d.classList.toggle('active',i===cur);});}
+function initSS(trId,cntEl,dotsEl,n,iv){
+  var tr=document.getElementById(trId);if(!tr||!cntEl||!dotsEl)return;
+  var slides=tr.querySelectorAll('.slide'),total=slides.length,cur=0;if(!total)return;
+  dotsEl.innerHTML='';
+  for(var i=0;i<total;i++){(function(idx){var d=document.createElement('div');d.className='dot'+(idx===0?' active':'');d.onclick=function(){goSS(trId,idx);};dotsEl.appendChild(d);})(i);}
+  function render(){tr.style.transform='translateX(-'+cur*100+'%)';cntEl.textContent=(cur+1)+' / '+total;dotsEl.querySelectorAll('.dot').forEach(function(d,i){d.classList.toggle('active',i===cur);});}
   render();
   var timer=setInterval(function(){cur=(cur+1)%total;render();},iv);
   SS[trId]={cur:cur,n:total,render:render,timer:timer,iv:iv};
 }
-function goSS(trId,idx){
-  var s=SS[trId];if(!s)return;
-  clearInterval(s.timer);s.cur=((idx%s.n)+s.n)%s.n;s.render();
-  s.timer=setInterval(function(){s.cur=(s.cur+1)%s.n;s.render();},s.iv);
-}
+function goSS(trId,idx){var s=SS[trId];if(!s)return;clearInterval(s.timer);s.cur=((idx%s.n)+s.n)%s.n;s.render();s.timer=setInterval(function(){s.cur=(s.cur+1)%s.n;s.render();},s.iv);}
 function sp(trId){var s=SS[trId];if(s)goSS(trId,s.cur-1);}
 function sn(trId){var s=SS[trId];if(s)goSS(trId,s.cur+1);}
 
-/* -------- GALLERY PHOTOS -------- */
-var areaData={
-  billiard:{t:'🎱 ビリヤード — 17台 チャイニーズ８専門',p:[{b:'#1a1205',i:'🎱'},{b:'#0d1520',i:'🏆'},{b:'#140a08',i:'💫'},{b:'#0a0a14',i:'🎯'},{b:'#150e04',i:'🥃'},{b:'#080a18',i:'⭐'},{b:'#120510',i:'🌟'},{b:'#041412',i:'🎪'},{b:'#181004',i:'🔮'},{b:'#060c18',i:'✨'}]},
-  golf:{t:'⛳ ゴルフ — 室内練習場',p:[{b:'#041a08',i:'⛳'},{b:'#0a1a04',i:'🏌️'},{b:'#04140a',i:'📊'},{b:'#0a1808',i:'🎯'},{b:'#041008',i:'💻'},{b:'#0a0f05',i:'🏆'},{b:'#0f1a0a',i:'🌿'},{b:'#051205',i:'🎮'},{b:'#0a1a05',i:'📱'},{b:'#0d0f0a',i:'✅'}]},
-  mahjong:{t:'🀄 麻雀 — 優雅な中国風空間',p:[{b:'#041520',i:'🀄'},{b:'#100430',i:'🏮'},{b:'#040a20',i:'🍵'},{b:'#200410',i:'🌸'},{b:'#0a1505',i:'🌿'},{b:'#051010',i:'🎎'},{b:'#100510',i:'🎐'},{b:'#050a10',i:'🎋'},{b:'#150a05',i:'🎍'},{b:'#0a0510',i:'🏯'}]},
-  entrance:{t:'🚪 エントランス / ラウンジ',p:[{b:'#1a1200',i:'🚪'},{b:'#120d00',i:'👑'},{b:'#1a0d00',i:'⭐'},{b:'#0d1200',i:'🌟'},{b:'#1a1500',i:'💎'}]}
-};
-var galTimer=null;
-function showPhotos(area){
-  var d=areaData[area];if(!d)return;
-  var tEl=document.getElementById('pvTitle'),ms=document.getElementById('miniSlides');
-  if(tEl)tEl.textContent=d.t;if(!ms)return;
-  ms.innerHTML='';
-  d.p.forEach(function(p,i){var el=document.createElement('div');el.className='mini-slide'+(i===0?' active':'');el.style.background=p.b;el.innerHTML='<span style="font-size:1.7rem">'+p.i+'</span>';el.onclick=function(){document.querySelectorAll('.mini-slide').forEach(function(m){m.classList.remove('active');});el.classList.add('active');};ms.appendChild(el);});
-  clearInterval(galTimer);var gi=0;
-  galTimer=setInterval(function(){var sl=document.querySelectorAll('.mini-slide');if(!sl.length)return;sl.forEach(function(s){s.classList.remove('active');});gi=(gi+1)%sl.length;sl[gi].classList.add('active');},2000);
-}
+// ================================================================
+// LUXURY BG
+// ================================================================
+(function(){
+  var bg=document.getElementById('luxBg');if(!bg)return;
+  var p=['radial-gradient(ellipse at 20% 50%,#1a1205,#080a0d)','radial-gradient(ellipse at 70% 30%,#05101a,#060810)','radial-gradient(ellipse at 50% 20%,#100a18,#080810)','radial-gradient(ellipse at 10% 60%,#0a1505,#060c08)','radial-gradient(ellipse at 60% 70%,#18120a,#0a0c10)','radial-gradient(ellipse at 30% 40%,#050a14,#060810)','radial-gradient(ellipse at 80% 20%,#0e0e04,#080a08)'];
+  var i=0;bg.style.cssText='position:absolute;inset:0;z-index:0;pointer-events:none;transition:background 4s ease';bg.style.background=p[0];
+  setInterval(function(){i=(i+1)%p.length;bg.style.background=p[i];},5000);
+  var sec=document.getElementById('home');if(!sec)return;
+  var cols=['rgba(201,168,76,0.7)','rgba(232,201,122,0.5)','rgba(255,235,180,0.4)'];
+  for(var j=0;j<20;j++){var pt=document.createElement('div');var sz=(Math.random()*2+1).toFixed(1);pt.style.cssText='position:absolute;border-radius:50%;pointer-events:none;z-index:1;left:'+Math.random()*100+'%;width:'+sz+'px;height:'+sz+'px;background:'+cols[Math.floor(Math.random()*cols.length)]+';animation:particleDrift '+(Math.random()*20+18).toFixed(0)+'s linear '+(Math.random()*15).toFixed(0)+'s infinite';sec.appendChild(pt);}
+  var cv=document.getElementById('luxCanvas');if(!cv)return;
+  function dg(){var w=cv.offsetWidth,h=cv.offsetHeight;if(!w||!h)return;cv.width=w;cv.height=h;var ctx=cv.getContext('2d');ctx.clearRect(0,0,w,h);ctx.strokeStyle='rgba(201,168,76,0.04)';ctx.lineWidth=1;for(var x=0;x<w;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(var y=0;y<h;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}}
+  setTimeout(dg,200);window.addEventListener('resize',dg);
+})();
 
-/* -------- BGM -------- */
-var songs=[{t:'茉莉花 (Mo Li Hua)',s:'🇨🇳 中国 — 伝統民謡'},{t:'春の海',s:'🇯🇵 日本 — 宮城道雄'},{t:'Fly Me to the Moon',s:'🇬🇧 English — Jazz'},{t:'梁山伯与祝英台',s:'🇨🇳 中国 — クラシック'},{t:'さくら さくら',s:'🇯🇵 日本 — 伝統曲'},{t:'The Way You Look Tonight',s:'🇬🇧 English — Sinatra'},{t:'高山流水',s:'🇨🇳 中国 — 古琴曲'},{t:'花は咲く',s:'🇯🇵 日本 — NHK'}];
-var musPl=false,musSI=0,musT=null,musPT=null,musPV=0;
-function toggleMus(){
-  var bt=document.getElementById('musBt'),pr=document.getElementById('musProg');
-  if(musPl){musPl=false;bt.textContent='▶';clearTimeout(musT);clearInterval(musPT);document.getElementById('musTitle').textContent='▶ を押して BGM を再生';document.getElementById('musSub').textContent='中国・日本・英語の曲をランダム再生';pr.style.width='0%';}
-  else{musPl=true;bt.textContent='⏸';musSI=Math.floor(Math.random()*songs.length);playMus();}
-}
-function playMus(){
-  if(!musPl)return;var prev=musSI;do{musSI=Math.floor(Math.random()*songs.length);}while(songs.length>1&&musSI===prev);
-  var s=songs[musSI];document.getElementById('musTitle').textContent=s.t;document.getElementById('musSub').textContent=s.s;
-  var pr=document.getElementById('musProg'),dur=25000+Math.random()*10000;musPV=0;pr.style.width='0%';clearInterval(musPT);
-  musPT=setInterval(function(){musPV+=100/(dur/200);pr.style.width=Math.min(musPV,100)+'%';},200);
-  musT=setTimeout(function(){clearInterval(musPT);playMus();},dur);
-}
-
-/* -------- EVENTS -------- */
-var evs=[
-  {type:'BILLIARD TOURNAMENT',name:'春季チャイニーズ８選手権',date:'2025年6月15日（日）',time:'14:00〜20:00',entry:'¥2,000',prize:'優勝¥50,000 / 準優勝¥20,000',max:32,cur:18},
-  {type:'MAHJONG EVENT',name:'麻雀フレンドリー大会',date:'2025年6月22日（日）',time:'13:00〜18:00',entry:'¥1,500',prize:'優勝¥30,000 / 準優勝¥15,000',max:24,cur:9},
-  {type:'GOLF CHALLENGE',name:'室内ゴルフ ニアピン競技',date:'2025年6月28日（土）',time:'11:00〜17:00',entry:'¥1,000',prize:'優勝¥20,000 / 各種賞品',max:20,cur:5}
-];
-function renderEvs(){
-  var g=document.getElementById('evGrid');if(!g)return;
-  g.innerHTML=evs.map(function(e,ei){var pct=Math.round(e.cur/e.max*100);return'<div class="ev-card"><div class="ev-head"><div class="ev-type">'+e.type+'</div><div class="ev-name">'+e.name+'</div></div><div class="ev-body"><div class="ev-meta"><div class="ev-row"><span>📅 日時</span>'+e.date+' '+e.time+'</div><div class="ev-row"><span>💰 参加費</span>'+e.entry+'</div><div class="ev-row"><span>🏆 賞金</span>'+e.prize+'</div><div class="ev-row"><span>👥 定員</span>'+e.max+'名（残り'+(e.max-e.cur)+'名）</div></div><div style="height:4px;background:rgba(255,255,255,0.08);overflow:hidden;margin-bottom:0.3rem"><div style="height:100%;background:var(--gold);width:'+pct+'%"></div></div><div style="font-size:0.7rem;color:var(--muted);margin-bottom:1rem">エントリー '+e.cur+'/'+e.max+'名</div><div style="font-size:0.7rem;color:var(--gold);margin-bottom:0.4rem">エントリー</div><input class="ev-input" placeholder="お名前" id="en'+ei+'"><input class="ev-input" placeholder="電話番号" id="ep'+ei+'" type="tel"><button class="ev-btn" onclick="subEv('+ei+')">エントリーする</button></div></div>';}).join('');
-}
-function subEv(ei){var n=(document.getElementById('en'+ei)||{}).value,p=(document.getElementById('ep'+ei)||{}).value;if(!n||!p){showToast('名前と電話番号を入力してください');return;}evs[ei].cur=Math.min(evs[ei].cur+1,evs[ei].max);showToast('✅ エントリー完了！');renderEvs();}
-
-/* -------- RESERVATION -------- */
+// ================================================================
+// RESERVATION
+// ================================================================
 var curZone='',curTbl='';
 function openForm(zone,label){
   curZone=zone;curTbl='';
@@ -746,22 +719,35 @@ function openForm(zone,label){
   var ts=document.getElementById('tblSel'),si=document.getElementById('selInfo');
   if(zone==='billiard'){ts.style.display='block';buildTbl();}
   else{ts.style.display='none';if(si)si.style.display='none';}
-  // スマホ: フォームまでスクロール
   if(window.innerWidth<=768){
-    setTimeout(function(){
-      var panel=document.getElementById('resPanel');
-      if(panel) panel.scrollIntoView({behavior:'smooth',block:'start'});
-    },100);
+    document.getElementById('resPanel').classList.add('open-mobile');
+    document.getElementById('resOverlay').classList.add('show');
   }
 }
-function closeForm(){/* PCは常時表示のため何もしない */}
+function closeForm(){
+  document.getElementById('resPanel').classList.remove('open-mobile');
+  document.getElementById('resOverlay').classList.remove('show');
+}
 function buildTbl(){
   var g=document.getElementById('tblGrid');if(!g)return;g.innerHTML='';
-  var occ=[3,7,11];
-  for(var i=1;i<=17;i++){
-    var b=document.createElement('button');b.className='tbl-btn'+(occ.indexOf(i-1)>=0?' occ':'');
-    b.textContent=i;b.disabled=occ.indexOf(i-1)>=0;
-    if(!b.disabled){(function(n,btn){btn.onclick=function(){document.querySelectorAll('.tbl-btn').forEach(function(x){x.classList.remove('sel');});btn.classList.add('sel');curTbl='テーブル'+n;var si=document.getElementById('selInfo');si.style.display='block';si.textContent='選択中: テーブル'+n;};})(i,b);}
+  var total=window._billTables||17;
+  // Firebaseから使用中テーブルを取得
+  var today=new Date().toISOString().split('T')[0];
+  var bookedTables=[];
+  if(db){
+    db.ref('reservations').orderByChild('date').equalTo(today).once('value',function(snap){
+      snap.forEach(function(c){var r=c.val();if(r.zone==='billiard'&&r.table)bookedTables.push(r.table);});
+      drawTbl(g,total,bookedTables);
+    });
+  } else { drawTbl(g,total,bookedTables); }
+}
+function drawTbl(g,total,bookedTables){
+  for(var i=1;i<=total;i++){
+    var b=document.createElement('button');
+    var isBooked=bookedTables.indexOf('テーブル'+i)>=0;
+    b.className='tbl-btn'+(isBooked?' occ':'');
+    b.textContent=i;b.disabled=isBooked;
+    if(!isBooked){(function(n,btn){btn.onclick=function(){document.querySelectorAll('.tbl-btn').forEach(function(x){x.classList.remove('sel');});btn.classList.add('sel');curTbl='テーブル'+n;var si=document.getElementById('selInfo');si.style.display='block';si.textContent='選択中: テーブル'+n;};})(i,b);}
     g.appendChild(b);
   }
 }
@@ -776,26 +762,34 @@ function submitRes(){
   if(!ph.trim()){showToast('電話番号を入力してください');return;}
   if(!dt){showToast('日付を選択してください');return;}
   if(curZone==='billiard'&&!curTbl){showToast('テーブルを選択してください');return;}
+  // 重複チェック
+  if(db && curZone==='billiard' && curTbl){
+    db.ref('reservations').orderByChild('date').equalTo(dt).once('value',function(snap){
+      var dup=false;
+      snap.forEach(function(c){var r=c.val();if(r.zone==='billiard'&&r.table===curTbl&&r.time===ti)dup=true;});
+      if(dup){showToast('⚠️ その日時・テーブルはすでに予約済みです');return;}
+      saveReservation(nm,ph,dt,ti,du,title);
+    });
+  } else {
+    saveReservation(nm,ph,dt,ti,du,title);
+  }
+}
+function saveReservation(nm,ph,dt,ti,du,title){
+  var resData={zone:curZone,table:curTbl,date:dt,time:ti,duration:du,name:nm,phone:ph,area:title,status:'pending',createdAt:new Date().toISOString()};
+  if(db){db.ref('reservations').push(resData);}
   var lines=[title];if(curTbl)lines.push(curTbl);lines.push('日付: '+dt,'時間: '+ti+' ('+du+')','名前: '+nm,'電話: '+ph);
   document.getElementById('resDetail').textContent=lines.join(' / ');
   document.getElementById('resConf').style.display='block';
   showToast('✅ 予約が完了しました！');
   document.getElementById('rName').value='';document.getElementById('rPhone').value='';
-  curTbl='';buildTbl();var si=document.getElementById('selInfo');if(si)si.style.display='none';
+  curTbl='';
+  var si=document.getElementById('selInfo');if(si)si.style.display='none';
 }
 
-/* -------- TOAST -------- */
+// ================================================================
+// TOAST
+// ================================================================
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3500);}
-
-/* -------- INIT -------- */
-window.addEventListener('load',function(){
-  initSS('tr0',document.getElementById('cnt0'),document.getElementById('dots0'),10,2000);
-  initSS('tr1',document.getElementById('cnt1'),document.getElementById('dots1'),5,2000);
-  initSS('tr2',document.getElementById('cnt2'),document.getElementById('dots2'),5,2000);
-  document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('visible');});
-  showPhotos('billiard');
-  renderEvs();
-});
 </script>
 </body>
 </html>
