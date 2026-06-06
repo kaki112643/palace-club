@@ -623,26 +623,31 @@ var editingZone = '';
 
 function initAdmin(){
   startClock();
-  // リアルタイムでデータ取得
+
+  // メインデータのリアルタイム監視（shop/plans/events/facility）
   db.ref('/').on('value', function(snap){
     adminData = snap.val() || {};
     if(!adminData.shop) adminData.shop = DEFAULT_DATA.shop;
     if(!adminData.plans) adminData.plans = DEFAULT_DATA.plans;
     if(!adminData.events) adminData.events = DEFAULT_DATA.events;
-    if(!adminData.facility) adminData.facility = DEFAULT_DATA.facility||{billiard_tables:17,golf_rooms:2,mahjong_rooms:2};
+    if(!adminData.facility) adminData.facility = {billiard_tables:17,golf_rooms:2,mahjong_rooms:2};
 
-    // 各ページのデータを更新
     loadShopForm();
     loadPlansForm();
     loadFacilityForm();
-    renderReservations();
     renderEventTable();
     renderEntryTable();
     renderMembers();
-    renderTodayMatrix();
-    updatePendingBadge();
     renderDashboard();
   });
+
+  // 予約のリアルタイム監視（別途）
+  db.ref('reservations').on('value', function(snap){
+    renderReservations();
+    renderTodayMatrix();
+    updatePendingBadge();
+  });
+
   document.getElementById('todayDateLabel').textContent = new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
   document.getElementById('evDate').value = new Date().toISOString().split('T')[0];
   loadPhotos();

@@ -101,10 +101,10 @@ nav{position:fixed;top:0;width:100%;z-index:200;padding:0 2rem;background:rgba(6
 .slide-track{display:flex;height:100%;transition:transform 0.55s cubic-bezier(0.77,0,0.18,1)}
 .slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;position:relative}
 .slide-lbl{font-family:'Bebas Neue';font-size:1.3rem;color:var(--gold);letter-spacing:0.25em;position:absolute;bottom:1.2rem;left:0;right:0;text-align:center}
-.s-arr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(201,168,76,0.35);color:var(--gold);font-size:1.3rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;user-select:none}
+.s-arr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);border:1px solid rgba(201,168,76,0.5);color:var(--gold);font-size:1.5rem;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;user-select:none;pointer-events:all}
 .s-prev{left:0.5rem}.s-next{right:0.5rem}
-.s-dots{position:absolute;bottom:0.6rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;z-index:5}
-.dot{width:7px;height:7px;border-radius:50%;background:rgba(201,168,76,0.3);cursor:pointer;transition:all 0.3s}
+.s-dots{position:absolute;bottom:0.6rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;z-index:20;pointer-events:all}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(201,168,76,0.4);cursor:pointer;transition:all 0.3s;pointer-events:all}
 .dot.active{background:var(--gold);transform:scale(1.35)}
 .s-cnt{position:absolute;top:0.6rem;right:0.6rem;background:rgba(0,0,0,0.6);color:var(--gold);font-size:0.7rem;padding:0.2rem 0.6rem;font-family:'Bebas Neue';z-index:5}
 /* Slide colors */
@@ -554,7 +554,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   </div>
 </footer>
 
-<div id="resOverlay" onclick="closeForm()"></div>
+<div id="resOverlay"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -809,19 +809,50 @@ function cn(){var n=document.getElementById('navLinks'),h=document.getElementByI
 // SLIDESHOW
 // ================================================================
 var SS={};
-function initSS(trId,cntEl,dotsEl,n,iv){
-  var tr=document.getElementById(trId);if(!tr||!cntEl||!dotsEl)return;
-  var slides=tr.querySelectorAll('.slide'),total=slides.length,cur=0;if(!total)return;
+function initSS(trId,cntEl,dotsEl,total,iv){
+  var tr=document.getElementById(trId);
+  if(!tr||!cntEl||!dotsEl) return;
+  var slides=tr.querySelectorAll('.slide');
+  if(!slides.length) total=0;
+  else total=slides.length;
+  if(!total) return;
+  var cur=0;
+  // ドット生成
   dotsEl.innerHTML='';
-  for(var i=0;i<total;i++){(function(idx){var d=document.createElement('div');d.className='dot'+(idx===0?' active':'');d.onclick=function(){goSS(trId,idx);};dotsEl.appendChild(d);})(i);}
-  function render(){tr.style.transform='translateX(-'+cur*100+'%)';cntEl.textContent=(cur+1)+' / '+total;dotsEl.querySelectorAll('.dot').forEach(function(d,i){d.classList.toggle('active',i===cur);});}
+  for(var i=0;i<total;i++){
+    (function(idx){
+      var d=document.createElement('div');
+      d.className='dot'+(idx===0?' active':'');
+      d.addEventListener('click',function(e){
+        e.stopPropagation();
+        goSS(trId,idx);
+      });
+      dotsEl.appendChild(d);
+    })(i);
+  }
+  function render(){
+    tr.style.transform='translateX(-'+cur*100+'%)';
+    cntEl.textContent=(cur+1)+' / '+total;
+    var dots=dotsEl.querySelectorAll('.dot');
+    for(var j=0;j<dots.length;j++) dots[j].classList.toggle('active',j===cur);
+  }
   render();
-  var timer=setInterval(function(){cur=(cur+1)%total;render();},iv);
+  var timer=setInterval(function(){ cur=(cur+1)%total; render(); },iv);
   SS[trId]={cur:cur,n:total,render:render,timer:timer,iv:iv};
 }
-function goSS(trId,idx){var s=SS[trId];if(!s)return;clearInterval(s.timer);s.cur=((idx%s.n)+s.n)%s.n;s.render();s.timer=setInterval(function(){s.cur=(s.cur+1)%s.n;s.render();},s.iv);}
-function sp(trId){var s=SS[trId];if(s)goSS(trId,s.cur-1);}
-function sn(trId){var s=SS[trId];if(s)goSS(trId,s.cur+1);}
+function goSS(trId,idx){
+  var s=SS[trId]; if(!s) return;
+  clearInterval(s.timer);
+  s.cur=((idx%s.n)+s.n)%s.n;
+  s.render();
+  s.timer=setInterval(function(){ s.cur=(s.cur+1)%s.n; s.render(); },s.iv);
+}
+function sp(trId){
+  var s=SS[trId]; if(s) goSS(trId,s.cur-1);
+}
+function sn(trId){
+  var s=SS[trId]; if(s) goSS(trId,s.cur+1);
+}
 
 // ================================================================
 // LUXURY BG
@@ -844,22 +875,32 @@ function sn(trId){var s=SS[trId];if(s)goSS(trId,s.cur+1);}
 // ================================================================
 var curZone='',curTbl='';
 function openForm(zone,label){
-  curZone=zone;curTbl='';
+  curZone=zone; curTbl='';
   document.getElementById('resPanelTitle').textContent=label;
   document.getElementById('resConf').style.display='none';
   var today=new Date().toISOString().split('T')[0];
-  var rd=document.getElementById('rDate');rd.min=today;if(!rd.value)rd.value=today;
-  var ts=document.getElementById('tblSel'),si=document.getElementById('selInfo');
-  if(zone==='billiard'){ts.style.display='block';buildTbl();}
-  else{ts.style.display='none';if(si)si.style.display='none';}
+  var rd=document.getElementById('rDate');
+  rd.min=today; if(!rd.value) rd.value=today;
+  var ts=document.getElementById('tblSel'), si=document.getElementById('selInfo');
+  if(zone==='billiard'){ts.style.display='block'; buildTbl();}
+  else{ts.style.display='none'; if(si) si.style.display='none';}
+
+  var panel=document.getElementById('resPanel');
+  var overlay=document.getElementById('resOverlay');
   if(window.innerWidth<=768){
-    document.getElementById('resPanel').classList.add('open-mobile');
-    document.getElementById('resOverlay').classList.add('show');
+    // スマホ: 下から表示
+    panel.classList.add('open-mobile');
+    // オーバーレイは表示するが、フォームより下
+    overlay.style.display='block';
+    // オーバーレイクリックで閉じる（フォーム外をクリックした場合のみ）
+    overlay.onclick=function(e){ e.stopPropagation(); closeForm(); };
   }
 }
 function closeForm(){
-  document.getElementById('resPanel').classList.remove('open-mobile');
-  document.getElementById('resOverlay').classList.remove('show');
+  var panel=document.getElementById('resPanel');
+  var overlay=document.getElementById('resOverlay');
+  panel.classList.remove('open-mobile');
+  overlay.style.display='none';
 }
 function buildTbl(){
   var g=document.getElementById('tblGrid');if(!g)return;g.innerHTML='';
@@ -908,15 +949,41 @@ function submitRes(){
   }
 }
 function saveReservation(nm,ph,dt,ti,du,title){
-  var resData={zone:curZone,table:curTbl,date:dt,time:ti,duration:du,name:nm,phone:ph,area:title,status:'pending',createdAt:new Date().toISOString()};
-  if(db){db.ref('reservations').push(resData);}
-  var lines=[title];if(curTbl)lines.push(curTbl);lines.push('日付: '+dt,'時間: '+ti+' ('+du+')','名前: '+nm,'電話: '+ph);
-  document.getElementById('resDetail').textContent=lines.join(' / ');
-  document.getElementById('resConf').style.display='block';
-  showToast('✅ 予約が完了しました！');
-  document.getElementById('rName').value='';document.getElementById('rPhone').value='';
-  curTbl='';
-  var si=document.getElementById('selInfo');if(si)si.style.display='none';
+  var resData={
+    zone:curZone, table:curTbl, date:dt, time:ti,
+    duration:du, name:nm, phone:ph, area:title,
+    status:'pending', createdAt:new Date().toISOString()
+  };
+  if(db){
+    db.ref('reservations').push(resData)
+      .then(function(){
+        var lines=[title];
+        if(curTbl) lines.push(curTbl);
+        lines.push('日付: '+dt,'時間: '+ti+' ('+du+')','名前: '+nm,'電話: '+ph);
+        document.getElementById('resDetail').textContent=lines.join(' / ');
+        document.getElementById('resConf').style.display='block';
+        showToast('✅ 予約が完了しました！');
+        document.getElementById('rName').value='';
+        document.getElementById('rPhone').value='';
+        curTbl='';
+        var si=document.getElementById('selInfo');if(si) si.style.display='none';
+        // スマホなら3秒後にフォームを閉じる
+        if(window.innerWidth<=768){
+          setTimeout(function(){ closeForm(); },3000);
+        }
+      })
+      .catch(function(e){
+        showToast('❌ 保存エラー: '+e.message);
+      });
+  } else {
+    // Firebase未接続時はデモ表示
+    var lines=[title];
+    if(curTbl) lines.push(curTbl);
+    lines.push('日付: '+dt,'時間: '+ti+' ('+du+')','名前: '+nm,'電話: '+ph);
+    document.getElementById('resDetail').textContent=lines.join(' / ');
+    document.getElementById('resConf').style.display='block';
+    showToast('✅ 予約が完了しました！');
+  }
 }
 
 // ================================================================
