@@ -97,12 +97,12 @@ nav{position:fixed;top:0;width:100%;z-index:200;padding:0 2rem;background:rgba(6
 .acc-icon{width:40px;height:40px;border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .acc-text strong{display:block;color:var(--gold);font-size:0.72rem;letter-spacing:0.1em;margin-bottom:0.2rem}
 .acc-text span{font-size:0.83rem;color:var(--muted);line-height:1.7}
-.slideshow{position:relative;overflow:hidden;border:1px solid rgba(201,168,76,0.25);background:#0a0c10}
-.slide-track{display:flex;height:100%;transition:transform 0.55s cubic-bezier(0.77,0,0.18,1)}
+.slideshow{position:relative;overflow:visible;border:1px solid rgba(201,168,76,0.25);background:#0a0c10}
+.slide-track{display:flex;height:100%;transition:transform 0.55s cubic-bezier(0.77,0,0.18,1);overflow:hidden}
 .slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;position:relative}
 .slide-lbl{font-family:'Bebas Neue';font-size:1.3rem;color:var(--gold);letter-spacing:0.25em;position:absolute;bottom:1.2rem;left:0;right:0;text-align:center}
-.s-arr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);border:1px solid rgba(201,168,76,0.5);color:var(--gold);font-size:1.5rem;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;user-select:none;pointer-events:all}
-.s-prev{left:0.5rem}.s-next{right:0.5rem}
+.s-arr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.75);border:2px solid var(--gold);color:var(--gold);font-size:1.8rem;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:100;user-select:none;pointer-events:all;border-radius:3px}
+.s-prev{left:-22px}.s-next{right:-22px}
 .s-dots{position:absolute;bottom:0.6rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;z-index:20;pointer-events:all}
 .dot{width:9px;height:9px;border-radius:50%;background:rgba(201,168,76,0.4);cursor:pointer;transition:all 0.3s;pointer-events:all}
 .dot.active{background:var(--gold);transform:scale(1.35)}
@@ -232,9 +232,27 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   h1{font-size:2rem!important}
   .tbl-grid{grid-template-columns:repeat(6,1fr)!important}
   /* スマホ: 予約フォームを下部シートで表示 */
-  #resPanel{position:fixed!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;max-height:85vh!important;overflow-y:auto!important;z-index:10000!important;border-top:2px solid var(--gold)!important;background:#0d0f12!important;display:none!important;top:auto!important}
+  #resPanel{
+    position:fixed!important;
+    bottom:0!important;left:0!important;right:0!important;top:auto!important;
+    width:100vw!important;max-width:100vw!important;
+    max-height:88vh!important;
+    overflow-y:auto!important;
+    z-index:99999!important;
+    border-top:3px solid var(--gold)!important;
+    background:#0d0f12!important;
+    display:none!important;
+    pointer-events:all!important;
+  }
   #resPanel.open-mobile{display:block!important}
-  #resOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999}
+  #resPanel *{pointer-events:all!important}
+  #resOverlay{
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.5);
+    z-index:99998;
+    pointer-events:all;
+  }
   #resOverlay.show{display:block}
 }
 @media(max-width:400px){.equip-grid{grid-template-columns:1fr!important}}
@@ -888,19 +906,18 @@ function openForm(zone,label){
   var panel=document.getElementById('resPanel');
   var overlay=document.getElementById('resOverlay');
   if(window.innerWidth<=768){
-    // スマホ: 下から表示
     panel.classList.add('open-mobile');
-    // オーバーレイは表示するが、フォームより下
-    overlay.style.display='block';
-    // オーバーレイクリックで閉じる（フォーム外をクリックした場合のみ）
-    overlay.onclick=function(e){ e.stopPropagation(); closeForm(); };
+    overlay.classList.add('show');
+    // フォーム内のクリックは閉じない
+    panel.onclick=function(e){ e.stopPropagation(); };
+    overlay.onclick=function(){ closeForm(); };
   }
 }
 function closeForm(){
   var panel=document.getElementById('resPanel');
   var overlay=document.getElementById('resOverlay');
   panel.classList.remove('open-mobile');
-  overlay.style.display='none';
+  overlay.classList.remove('show');
 }
 function buildTbl(){
   var g=document.getElementById('tblGrid');if(!g)return;g.innerHTML='';
@@ -932,6 +949,7 @@ function submitRes(){
   var ti=(document.getElementById('rTime')||{value:'13:00'}).value;
   var du=(document.getElementById('rDur')||{value:'1時間'}).value;
   var title=(document.getElementById('resPanelTitle')||{}).textContent||'';
+  if(!curZone){showToast('エリアを選択してください');return;}
   if(!nm.trim()){showToast('お名前を入力してください');return;}
   if(!ph.trim()){showToast('電話番号を入力してください');return;}
   if(!dt){showToast('日付を選択してください');return;}

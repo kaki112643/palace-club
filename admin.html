@@ -1050,26 +1050,38 @@ function renderEventTable(){
 }
 function renderEntryTable(){
   db.ref('entries').once('value',function(snap){
-    var entries=[];snap.forEach(function(c){entries.push({id:c.key,...c.val()});});
-    document.getElementById('entHead').innerHTML='<tr><th>イベントID</th><th>名前</th><th>電話</th><th>日付</th></tr>';
+    var entries=[];
+    snap.forEach(function(c){
+      var obj=c.val(); obj.id=c.key; entries.push(obj);
+    });
+    document.getElementById('entHead').innerHTML='<tr><th>イベント名</th><th>名前</th><th>電話</th><th>日付</th></tr>';
+    if(!entries.length){
+      document.getElementById('entBody').innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1.5rem">エントリーがありません</td></tr>';
+      return;
+    }
+    // イベントIDからイベント名を引く
+    var evList = adminData.events || [];
+    var evMap = {};
+    (Array.isArray(evList)?evList:Object.values(evList)).forEach(function(ev){
+      if(ev && ev.id) evMap[ev.id] = ev.name;
+    });
     document.getElementById('entBody').innerHTML=entries.map(function(e){
-      return '<tr><td style="color:var(--muted)">'+(e.eventId||'')+'</td><td>'+(e.name||'')+'</td><td style="color:var(--muted)">'+(e.phone||'')+'</td><td style="color:var(--muted)">'+(e.date||'').slice(0,10)+'</td></tr>';
+      var evName = evMap[e.eventId] || e.eventId || '';
+      return '<tr>'
+        +'<td style="color:var(--gold)">'+(evName)+'</td>'
+        +'<td style="font-weight:500">'+(e.name||'')+'</td>'
+        +'<td style="color:var(--muted)">'+(e.phone||'')+'</td>'
+        +'<td style="color:var(--muted)">'+(e.date||'').slice(0,10)+'</td>'
+      +'</tr>';
     }).join('');
   });
 }
 function createEvent(){
   var name = getVal('evName');
   if(!name){ showToast('イベント名を入力してください'); return; }
-  // eventsが配列かオブジェクトかチェックして配列に変換
-  var rawEvs = adminData.events || [];
-  var evs = [];
-  if(Array.isArray(rawEvs)){
-    evs = JSON.parse(JSON.stringify(rawEvs));
-  } else {
-    Object.keys(rawEvs).forEach(function(k){ evs.push(rawEvs[k]); });
-  }
+
   var newEv={
-    id:'E'+(Date.now()),
+    id:'E'+Date.now(),
     name:name,
     type:getVal('evType'),
     date:getVal('evDate'),
@@ -1080,16 +1092,28 @@ function createEvent(){
     current:0,
     active:true
   };
+
+  // 既存イベントを配列に変換
+  var evs=[];
+  var raw=adminData.events||[];
+  if(Array.isArray(raw)){
+    for(var i=0;i<raw.length;i++) if(raw[i]) evs.push(raw[i]);
+  } else {
+    var keys=Object.keys(raw);
+    for(var i=0;i<keys.length;i++) if(raw[keys[i]]) evs.push(raw[keys[i]]);
+  }
   evs.push(newEv);
+
+  showToast('保存中...');
   db.ref('events').set(evs)
     .then(function(){
-      showToast('✅ イベントを作成しました');
+      showToast('✅ イベントを作成しました！');
       document.getElementById('eventModal').classList.remove('open');
-      // フォームをリセット
-      setVal('evName','');setVal('evPrize','');
+      setVal('evName',''); setVal('evPrize','');
     })
-    .catch(function(e){
-      showToast('❌ エラー: ' + e.message);
+    .catch(function(err){
+      console.error('createEvent error:', err);
+      showToast('❌ エラー: ' + err.message);
     });
 }
 function toggleEvent(i){
