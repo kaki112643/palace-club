@@ -522,26 +522,38 @@ try {
 // ページ読み込み: Firebaseからデータ取得 → 画面反映
 // ================================================================
 window.addEventListener('load', function() {
+  var loadingDone = false;
+  function hideLoading() {
+    if (loadingDone) return;
+    loadingDone = true;
+    document.getElementById('fb-loading').style.display = 'none';
+  }
+
+  // 5秒でタイムアウト（Firebaseに繋がらなくてもデフォルトデータで表示）
+  setTimeout(function() {
+    if (!loadingDone) {
+      applyData(DEFAULT_DATA);
+      hideLoading();
+    }
+  }, 5000);
+
   if (db) {
-    // リアルタイムで全データを監視
     db.ref('/').on('value', function(snap) {
       var data = snap.val();
       if (!data) {
-        // 初回: デフォルトデータを書き込み
         db.ref('/').set(DEFAULT_DATA);
         data = DEFAULT_DATA;
       }
       applyData(data);
-      document.getElementById('fb-loading').style.display = 'none';
+      hideLoading();
     }, function(err) {
       console.warn('Firebase read error:', err);
-      // Firebaseエラー時はデフォルトデータで表示
       applyData(DEFAULT_DATA);
-      document.getElementById('fb-loading').style.display = 'none';
+      hideLoading();
     });
   } else {
     applyData(DEFAULT_DATA);
-    document.getElementById('fb-loading').style.display = 'none';
+    hideLoading();
   }
 
   initSS('tr0', document.getElementById('cnt0'), document.getElementById('dots0'), 10, 2000);
