@@ -103,8 +103,8 @@ nav{position:fixed;top:0;width:100%;z-index:200;padding:0 2rem;background:rgba(6
 .slide-lbl{font-family:'Bebas Neue';font-size:1.3rem;color:var(--gold);letter-spacing:0.25em;position:absolute;bottom:1.2rem;left:0;right:0;text-align:center}
 .s-arr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.75);border:2px solid var(--gold);color:var(--gold);font-size:1.5rem;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:50;user-select:none;pointer-events:all;border-radius:3px}
 .s-prev{left:8px}.s-next{right:8px}
-.s-dots{position:absolute;bottom:0.6rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;z-index:50;pointer-events:none}
-.dot{width:9px;height:9px;border-radius:50%;background:rgba(201,168,76,0.3);transition:all 0.3s;pointer-events:none;cursor:default}
+.s-dots{display:flex;justify-content:center;gap:0.5rem;margin-top:0.6rem;pointer-events:none}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(201,168,76,0.3);transition:all 0.3s;pointer-events:none;cursor:default;display:inline-block}
 .dot.active{background:var(--gold);transform:scale(1.35)}
 .s-cnt{position:absolute;top:0.6rem;right:0.6rem;background:rgba(0,0,0,0.6);color:var(--gold);font-size:0.7rem;padding:0.2rem 0.6rem;font-family:'Bebas Neue';z-index:5}
 /* Slide colors */
@@ -306,9 +306,9 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
           <div class="slide sc7"><span style="font-size:3.5rem">🏙</span><div class="slide-lbl" style="color:#c8dcff">TAKADANOBABA</div></div>
           <div class="slide sc8"><span style="font-size:3.5rem">🎯</span><div class="slide-lbl" style="color:#ffd888">PRACTICE AREA</div></div>
           <div class="slide sc9"><span style="font-size:3.5rem">✨</span><div class="slide-lbl" style="color:#b4ffdc">MEMBER'S CLUB</div></div>
-        <div class="s-dots" id="dots0"></div>
         </div>
       </div>
+      <div class="s-dots" id="dots0"></div>
     </div>
     <!-- 詳細 + 地図 -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem;align-items:start" class="reveal">
@@ -355,9 +355,9 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
             <div class="slide sg2"><span style="font-size:3.5rem">📊</span><div class="slide-lbl" style="color:#22c55e">SHOT ANALYSIS</div></div>
             <div class="slide sg3"><span style="font-size:3.5rem">🎯</span><div class="slide-lbl" style="color:#22c55e">PUTTING GREEN</div></div>
             <div class="slide sg4"><span style="font-size:3.5rem">💻</span><div class="slide-lbl" style="color:#22c55e">VIRTUAL COURSE</div></div>
-          <div class="s-dots" id="dots1"></div>
           </div>
         </div>
+        <div class="s-dots" id="dots1"></div>
       </div>
       <div>
         <h3 style="font-family:'Playfair Display';font-size:1.4rem;color:var(--gold);margin-bottom:1rem">高品質な練習環境</h3>
@@ -396,9 +396,9 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
             <div class="slide sm2"><span style="font-size:3.5rem">🏮</span><div class="slide-lbl" style="color:#22c55e">PRIVATE ROOM</div></div>
             <div class="slide sm3"><span style="font-size:3.5rem">🌿</span><div class="slide-lbl" style="color:#22c55e">RELAX SPACE</div></div>
             <div class="slide sm4"><span style="font-size:3.5rem">✨</span><div class="slide-lbl" style="color:#22c55e">NIGHT GAME</div></div>
-          <div class="s-dots" id="dots2"></div>
           </div>
         </div>
+        <div class="s-dots" id="dots2"></div>
       </div>
       <div>
         <p style="font-size:0.9rem;color:var(--muted);line-height:1.9;margin-bottom:2rem">中国の伝統文化が漂う優雅な空間で、日常を忘れてゆったりと麻雀を楽しめます。初心者から上級者まで歓迎です。</p>
