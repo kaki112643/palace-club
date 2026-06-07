@@ -231,33 +231,17 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
   .ft-bottom{flex-direction:column;gap:0.4rem;text-align:center}
   h1{font-size:2rem!important}
   .tbl-grid{grid-template-columns:repeat(6,1fr)!important}
-  /* スマホ: 予約フォームをモーダルで表示 */
+  /* スマホ: 予約フォーム */
   #resPanel{
-    position:fixed!important;
-    top:10vh!important;
-    left:5vw!important;
-    right:5vw!important;
-    bottom:auto!important;
-    width:90vw!important;
-    max-height:80vh!important;
-    overflow-y:auto!important;
-    z-index:99999!important;
-    border:2px solid var(--gold)!important;
-    background:#0d0f12!important;
-    display:none!important;
-    border-radius:8px!important;
-    -webkit-overflow-scrolling:touch!important;
+    display:block!important;
+    position:static!important;
+    width:100%!important;
+    border:1px solid rgba(201,168,76,0.25)!important;
+    background:rgba(10,12,16,0.85)!important;
+    margin-top:1rem!important;
   }
-  #resPanel.open-mobile{display:block!important}
-  #resOverlay{
-    display:none;
-    position:fixed;
-    top:0;left:0;right:0;bottom:0;
-    width:100%;height:100%;
-    background:rgba(0,0,0,0.7);
-    z-index:99998;
-  }
-  #resOverlay.show{display:block}
+  #resOverlay{display:none!important}
+  #resOverlay.show{display:none!important}
 }
 @media(max-width:400px){.equip-grid{grid-template-columns:1fr!important}}
 </style>
@@ -323,10 +307,6 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
           <div class="slide sc8"><span style="font-size:3.5rem">🎯</span><div class="slide-lbl" style="color:#ffd888">PRACTICE AREA</div></div>
           <div class="slide sc9"><span style="font-size:3.5rem">✨</span><div class="slide-lbl" style="color:#b4ffdc">MEMBER'S CLUB</div></div>
         </div>
-        <div class="s-arr s-prev" onclick="sp('tr0')">&#8249;</div>
-        <div class="s-arr s-next" onclick="sn('tr0')">&#8250;</div>
-        <div class="s-cnt" id="cnt0">1 / 10</div>
-        <div class="s-dots" id="dots0"></div>
       </div>
     </div>
     <!-- 詳細 + 地図 -->
@@ -375,10 +355,6 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
             <div class="slide sg3"><span style="font-size:3.5rem">🎯</span><div class="slide-lbl" style="color:#22c55e">PUTTING GREEN</div></div>
             <div class="slide sg4"><span style="font-size:3.5rem">💻</span><div class="slide-lbl" style="color:#22c55e">VIRTUAL COURSE</div></div>
           </div>
-          <div class="s-arr s-prev" onclick="sp('tr1')">&#8249;</div>
-          <div class="s-arr s-next" onclick="sn('tr1')">&#8250;</div>
-          <div class="s-cnt" id="cnt1">1 / 5</div>
-          <div class="s-dots" id="dots1"></div>
         </div>
       </div>
       <div>
@@ -419,10 +395,6 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
             <div class="slide sm3"><span style="font-size:3.5rem">🌿</span><div class="slide-lbl" style="color:#22c55e">RELAX SPACE</div></div>
             <div class="slide sm4"><span style="font-size:3.5rem">✨</span><div class="slide-lbl" style="color:#22c55e">NIGHT GAME</div></div>
           </div>
-          <div class="s-arr s-prev" onclick="sp('tr2')">&#8249;</div>
-          <div class="s-arr s-next" onclick="sn('tr2')">&#8250;</div>
-          <div class="s-cnt" id="cnt2">1 / 5</div>
-          <div class="s-dots" id="dots2"></div>
         </div>
       </div>
       <div>
@@ -796,24 +768,29 @@ function renderEvents(evs) {
         +'<div style="font-size:0.7rem;color:var(--gold);margin-bottom:0.4rem">エントリー</div>'
         +'<input class="ev-input" placeholder="お名前" id="en'+ei+'">'
         +'<input class="ev-input" placeholder="電話番号" id="ep'+ei+'" type="tel">'
-        +'<button class="ev-btn" onclick="subEv(\''+e.id+'\','+ei+')">エントリーする</button>'
+        +'<button class="ev-btn" onclick="subEv(\''+e.id+'\',\''+e.name.replace(/'/g,'')+'\','+ei+')">エントリーする</button>'
       +'</div></div>';
   }).join('');
 }
 
-function subEv(evId, ei) {
+function subEv(evId, evName, ei) {
   var name  = (document.getElementById('en'+ei)||{}).value||'';
   var phone = (document.getElementById('ep'+ei)||{}).value||'';
   if (!name||!phone) { showToast('名前と電話番号を入力してください'); return; }
   if (db) {
-    // Firebaseにエントリーを保存
     var entryRef = db.ref('entries').push();
-    entryRef.set({eventId:evId, name:name, phone:phone, date:new Date().toISOString()});
-    // エントリー数を増加
+    entryRef.set({
+      eventId: evId,
+      eventName: evName,
+      name: name,
+      phone: phone,
+      date: new Date().toISOString()
+    });
     db.ref('events').once('value', function(snap) {
       var evs = snap.val() || [];
-      evs.forEach(function(e, i) {
-        if (e.id === evId) {
+      var arr = Array.isArray(evs)?evs:Object.values(evs);
+      arr.forEach(function(e, i) {
+        if (e && e.id === evId) {
           db.ref('events/'+i+'/current').set(Math.min((e.current||0)+1, e.max||32));
         }
       });
@@ -835,30 +812,15 @@ function cn(){var n=document.getElementById('navLinks'),h=document.getElementByI
 var SS={};
 function initSS(trId,cntEl,dotsEl,total,iv){
   var tr=document.getElementById(trId);
-  if(!tr||!cntEl||!dotsEl) return;
+  if(!tr) return;
   var slides=tr.querySelectorAll('.slide');
   if(!slides.length) total=0;
   else total=slides.length;
   if(!total) return;
   var cur=0;
-  // ドット生成
-  dotsEl.innerHTML='';
-  for(var i=0;i<total;i++){
-    (function(idx){
-      var d=document.createElement('div');
-      d.className='dot'+(idx===0?' active':'');
-      d.addEventListener('click',function(e){
-        e.stopPropagation();
-        goSS(trId,idx);
-      });
-      dotsEl.appendChild(d);
-    })(i);
-  }
+  // ドット非表示
   function render(){
     tr.style.transform='translateX(-'+cur*100+'%)';
-    cntEl.textContent=(cur+1)+' / '+total;
-    var dots=dotsEl.querySelectorAll('.dot');
-    for(var j=0;j<dots.length;j++) dots[j].classList.toggle('active',j===cur);
   }
   render();
   var timer=setInterval(function(){ cur=(cur+1)%total; render(); },iv);
@@ -909,21 +871,16 @@ function openForm(zone,label){
   if(zone==='billiard'){ts.style.display='block'; buildTbl();}
   else{ts.style.display='none'; if(si) si.style.display='none';}
 
-  var panel=document.getElementById('resPanel');
-  var overlay=document.getElementById('resOverlay');
+  // スマホ: フォームはエリア図の下に常時表示、スクロールで表示
   if(window.innerWidth<=768){
-    panel.classList.add('open-mobile');
-    overlay.classList.add('show');
-    // フォーム内のクリックは閉じない
-    panel.onclick=function(e){ e.stopPropagation(); };
-    overlay.onclick=function(){ closeForm(); };
+    var panel=document.getElementById('resPanel');
+    if(panel){
+      panel.scrollIntoView({behavior:'smooth', block:'start'});
+    }
   }
 }
 function closeForm(){
-  var panel=document.getElementById('resPanel');
-  var overlay=document.getElementById('resOverlay');
-  panel.classList.remove('open-mobile');
-  overlay.classList.remove('show');
+  // PC: パネルは常時表示のため何もしない
 }
 function buildTbl(){
   var g=document.getElementById('tblGrid');if(!g)return;g.innerHTML='';

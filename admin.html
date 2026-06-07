@@ -1049,24 +1049,31 @@ function renderEventTable(){
   }).join('');
 }
 function renderEntryTable(){
-  db.ref('entries').once('value',function(snap){
-    var entries=[];
-    snap.forEach(function(c){
-      var obj=c.val(); obj.id=c.key; entries.push(obj);
-    });
-    document.getElementById('entHead').innerHTML='<tr><th>イベント名</th><th>名前</th><th>電話</th><th>日付</th></tr>';
-    if(!entries.length){
-      document.getElementById('entBody').innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1.5rem">エントリーがありません</td></tr>';
-      return;
-    }
-    // イベントマップを作成（IDと名前の対応）
+  // 先にイベントデータを取得してからエントリーを表示
+  db.ref('events').once('value',function(evSnap){
     var evMap={};
-    db.ref('events').once('value',function(evSnap){
-      var evData=evSnap.val()||[];
+    var evData=evSnap.val();
+    if(evData){
       var evArr=Array.isArray(evData)?evData:Object.values(evData);
-      evArr.forEach(function(ev){ if(ev&&ev.id) evMap[ev.id]=ev.name; });
+      evArr.forEach(function(ev){
+        if(!ev) return;
+        // IDでもインデックスでも引けるように
+        if(ev.id) evMap[ev.id]=ev.name;
+        if(ev.name) evMap[ev.name]=ev.name; // 名前でも引けるように
+      });
+    }
+    db.ref('entries').once('value',function(snap){
+      var entries=[];
+      snap.forEach(function(c){
+        var obj=c.val(); obj.id=c.key; entries.push(obj);
+      });
+      document.getElementById('entHead').innerHTML='<tr><th>イベント名</th><th>名前</th><th>電話</th><th>日付</th></tr>';
+      if(!entries.length){
+        document.getElementById('entBody').innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1.5rem">エントリーがありません</td></tr>';
+        return;
+      }
       document.getElementById('entBody').innerHTML=entries.map(function(e){
-        var evName=evMap[e.eventId]||(e.eventId||'');
+        var evName=e.eventName||evMap[e.eventId]||e.eventId||'';
         return '<tr>'
           +'<td style="color:var(--gold)">'+evName+'</td>'
           +'<td style="font-weight:500">'+(e.name||'')+'</td>'
