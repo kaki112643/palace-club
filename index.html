@@ -103,8 +103,8 @@ nav{position:fixed;top:0;width:100%;z-index:200;padding:0 2rem;background:rgba(6
 .slide-lbl{font-family:'Bebas Neue';font-size:1.3rem;color:var(--gold);letter-spacing:0.25em;position:absolute;bottom:1.2rem;left:0;right:0;text-align:center}
 .s-arr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.75);border:2px solid var(--gold);color:var(--gold);font-size:1.5rem;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:50;user-select:none;pointer-events:all;border-radius:3px}
 .s-prev{left:8px}.s-next{right:8px}
-.s-dots{position:absolute;bottom:0.6rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;z-index:50;pointer-events:all}
-.dot{width:9px;height:9px;border-radius:50%;background:rgba(201,168,76,0.4);cursor:pointer;transition:all 0.3s;pointer-events:all}
+.s-dots{position:absolute;bottom:0.6rem;left:50%;transform:translateX(-50%);display:flex;gap:0.4rem;z-index:50;pointer-events:none}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(201,168,76,0.3);transition:all 0.3s;pointer-events:none;cursor:default}
 .dot.active{background:var(--gold);transform:scale(1.35)}
 .s-cnt{position:absolute;top:0.6rem;right:0.6rem;background:rgba(0,0,0,0.6);color:var(--gold);font-size:0.7rem;padding:0.2rem 0.6rem;font-family:'Bebas Neue';z-index:5}
 /* Slide colors */
@@ -306,6 +306,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
           <div class="slide sc7"><span style="font-size:3.5rem">🏙</span><div class="slide-lbl" style="color:#c8dcff">TAKADANOBABA</div></div>
           <div class="slide sc8"><span style="font-size:3.5rem">🎯</span><div class="slide-lbl" style="color:#ffd888">PRACTICE AREA</div></div>
           <div class="slide sc9"><span style="font-size:3.5rem">✨</span><div class="slide-lbl" style="color:#b4ffdc">MEMBER'S CLUB</div></div>
+        <div class="s-dots" id="dots0"></div>
         </div>
       </div>
     </div>
@@ -354,6 +355,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
             <div class="slide sg2"><span style="font-size:3.5rem">📊</span><div class="slide-lbl" style="color:#22c55e">SHOT ANALYSIS</div></div>
             <div class="slide sg3"><span style="font-size:3.5rem">🎯</span><div class="slide-lbl" style="color:#22c55e">PUTTING GREEN</div></div>
             <div class="slide sg4"><span style="font-size:3.5rem">💻</span><div class="slide-lbl" style="color:#22c55e">VIRTUAL COURSE</div></div>
+          <div class="s-dots" id="dots1"></div>
           </div>
         </div>
       </div>
@@ -394,6 +396,7 @@ footer{background:#030407;border-top:1px solid rgba(201,168,76,0.12);padding:4re
             <div class="slide sm2"><span style="font-size:3.5rem">🏮</span><div class="slide-lbl" style="color:#22c55e">PRIVATE ROOM</div></div>
             <div class="slide sm3"><span style="font-size:3.5rem">🌿</span><div class="slide-lbl" style="color:#22c55e">RELAX SPACE</div></div>
             <div class="slide sm4"><span style="font-size:3.5rem">✨</span><div class="slide-lbl" style="color:#22c55e">NIGHT GAME</div></div>
+          <div class="s-dots" id="dots2"></div>
           </div>
         </div>
       </div>
@@ -602,9 +605,9 @@ window.addEventListener('load', function() {
     hideLoading();
   }
 
-  initSS('tr0', document.getElementById('cnt0'), document.getElementById('dots0'), 10, 2000);
-  initSS('tr1', document.getElementById('cnt1'), document.getElementById('dots1'), 5,  2000);
-  initSS('tr2', document.getElementById('cnt2'), document.getElementById('dots2'), 5,  2000);
+  initSS('tr0', null, document.getElementById('dots0'), 10, 2000);
+  initSS('tr1', null, document.getElementById('dots1'), 5, 2000);
+  initSS('tr2', null, document.getElementById('dots2'), 5, 2000);
   document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('visible'); });
 });
 
@@ -818,9 +821,21 @@ function initSS(trId,cntEl,dotsEl,total,iv){
   else total=slides.length;
   if(!total) return;
   var cur=0;
-  // ドット非表示
+  // ドット生成（表示のみ・クリック不可）
+  if(dotsEl){
+    dotsEl.innerHTML='';
+    for(var i=0;i<total;i++){
+      var d=document.createElement('div');
+      d.className='dot'+(i===0?' active':'');
+      dotsEl.appendChild(d);
+    }
+  }
   function render(){
     tr.style.transform='translateX(-'+cur*100+'%)';
+    if(dotsEl){
+      var dots=dotsEl.querySelectorAll('.dot');
+      for(var j=0;j<dots.length;j++) dots[j].classList.toggle('active',j===cur);
+    }
   }
   render();
   var timer=setInterval(function(){ cur=(cur+1)%total; render(); },iv);
