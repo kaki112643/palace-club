@@ -781,6 +781,7 @@ function subEv(evId, evName, ei) {
   var phone = (document.getElementById('ep'+ei)||{}).value||'';
   if (!name||!phone) { showToast('名前と電話番号を入力してください'); return; }
   if (db) {
+    autoRegisterMember(name, phone, 'event_entry');
     var entryRef = db.ref('entries').push();
     entryRef.set({
       eventId: evId,
@@ -800,6 +801,61 @@ function subEv(evId, evName, ei) {
     });
   }
   showToast('✅ エントリー完了！');
+}
+
+
+// ================================================================
+// アクセスカウンター（ページ読み込み時に記録）
+// ================================================================
+(function(){
+  if(!db) return;
+  var now = new Date();
+  var dateKey = now.toISOString().split('T')[0]; // YYYY-MM-DD
+  var hour = now.getHours();
+  var ua = navigator.userAgent;
+  var device = /Mobile|Android|iPhone|iPad/.test(ua) ? 'mobile' : 'pc';
+  var accessData = {
+    date: dateKey,
+    hour: hour,
+    device: device,
+    page: 'homepage',
+    timestamp: now.toISOString(),
+    ua: ua.substring(0, 100)
+  };
+  // 日別カウンターをインクリメント
+  db.ref('access/' + dateKey + '/count').transaction(function(cur){ return (cur||0)+1; });
+  db.ref('access/' + dateKey + '/device/' + device).transaction(function(cur){ return (cur||0)+1; });
+  // 詳細ログ
+  db.ref('accessLog').push(accessData);
+})();
+
+
+// ================================================================
+// 会員自動登録（予約・エントリー時）
+// ================================================================
+function autoRegisterMember(name, phone, source) {
+  if(!db || !name || !phone) return;
+  // 電話番号で既存会員を検索
+  db.ref('members').orderByChild('phone').equalTo(phone).once('value', function(snap){
+    if(snap.numChildren() > 0) {
+      // 既存会員 → 来店回数を更新
+      snap.forEach(function(c){
+        var visits = (c.val().visits||0) + 1;
+        db.ref('members/' + c.key + '/visits').set(visits);
+        db.ref('members/' + c.key + '/lastVisit').set(new Date().toISOString());
+      });
+    } else {
+      // 新規会員登録
+      db.ref('members').push({
+        name: name,
+        phone: phone,
+        source: source,
+        joinedAt: new Date().toISOString(),
+        lastVisit: new Date().toISOString(),
+        visits: 1
+      });
+    }
+  });
 }
 
 // ================================================================
@@ -953,6 +1009,7 @@ function saveReservation(nm,ph,dt,ti,du,title){
   if(db){
     db.ref('reservations').push(resData)
       .then(function(){
+        autoRegisterMember(nm, ph, 'reservation');
         var lines=[title];
         if(curTbl) lines.push(curTbl);
         lines.push('日付: '+dt,'時間: '+ti+' ('+du+')','名前: '+nm,'電話: '+ph);

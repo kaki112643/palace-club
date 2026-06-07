@@ -251,33 +251,58 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text
   </div>
   <div class="content">
 
+
     <!-- ── DASHBOARD ── -->
     <div class="page active" id="page-dashboard">
-      <div class="period-sel" id="dashPeriod">
-        <button class="p-btn active" onclick="setPeriod(7,this)">7日</button>
-        <button class="p-btn" onclick="setPeriod(30,this)">30日</button>
-        <button class="p-btn" onclick="setPeriod(90,this)">3ヶ月</button>
-        <button class="p-btn" onclick="setPeriod(365,this)">1年</button>
+
+      <!-- 期間選択 -->
+      <div style="background:var(--card);border:1px solid var(--bdr);padding:1rem 1.2rem;margin-bottom:1rem;display:flex;flex-wrap:wrap;align-items:center;gap:0.8rem">
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
+          <button class="p-btn active" onclick="setPreset(7,this)">7日</button>
+          <button class="p-btn" onclick="setPreset(30,this)">30日</button>
+          <button class="p-btn" onclick="setPreset(90,this)">3ヶ月</button>
+          <button class="p-btn" onclick="setPreset(365,this)">1年</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+          <span style="font-size:0.72rem;color:var(--muted)">カスタム：</span>
+          <input type="date" id="dateFrom" class="fi" style="width:140px;padding:0.35rem 0.6rem;font-size:0.78rem">
+          <span style="font-size:0.72rem;color:var(--muted)">〜</span>
+          <input type="date" id="dateTo" class="fi" style="width:140px;padding:0.35rem 0.6rem;font-size:0.78rem">
+          <button class="btn btn-gold btn-sm" onclick="applyCustomRange()">適用</button>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:0.5rem">
+          <button class="btn btn-outline btn-sm" onclick="exportDashboardCSV()">📥 CSVダウンロード</button>
+        </div>
       </div>
+
+      <!-- 期間表示 -->
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem" id="periodLabel"></div>
+
+      <!-- グラフ -->
       <div class="chart-grid">
         <div class="chart-card">
           <div class="chart-title">📅 カテゴリ別予約数</div>
+          <div style="display:flex;gap:1rem;margin-bottom:0.5rem" id="resStats"></div>
           <div class="chart-wrap"><canvas id="chartReservations"></canvas></div>
         </div>
         <div class="chart-card">
-          <div class="chart-title">👥 会員加入数</div>
+          <div class="chart-title">👥 会員加入数推移</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem" id="memberStats"></div>
           <div class="chart-wrap"><canvas id="chartMembers"></canvas></div>
         </div>
         <div class="chart-card">
-          <div class="chart-title">🌐 ページアクセス数</div>
+          <div class="chart-title">🌐 ページアクセス数推移</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem" id="accessStats"></div>
           <div class="chart-wrap"><canvas id="chartAccess"></canvas></div>
         </div>
         <div class="chart-card">
           <div class="chart-title">⏱ カテゴリ別稼働状況</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem" id="usageStats"></div>
           <div class="chart-wrap"><canvas id="chartUsage"></canvas></div>
         </div>
       </div>
     </div>
+
 
     <!-- ── TODAY MAP ── -->
     <div class="page" id="page-today">
@@ -650,6 +675,7 @@ function initAdmin(){
 
   document.getElementById('todayDateLabel').textContent = new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
   document.getElementById('evDate').value = new Date().toISOString().split('T')[0];
+  initDashboardDates();
   loadPhotos();
   loadMusicList();
 }
@@ -1220,55 +1246,151 @@ function renderMembers(){
 }
 
 // ================================================================
-// DASHBOARD CHARTS
+// DASHBOARD CHARTS — 期間選択・CSV対応
 // ================================================================
 var charts = {};
-var currentPeriod = 7;
+var dashFrom = '';
+var dashTo   = '';
 
-function setPeriod(days, btn){
-  currentPeriod=days;
+// 初期値設定（ページ読み込み時）
+function initDashboardDates(){
+  var today = new Date();
+  var from  = new Date(today);
+  from.setDate(from.getDate() - 7);
+  dashTo   = today.toISOString().split('T')[0];
+  dashFrom = from.toISOString().split('T')[0];
+  var fEl = document.getElementById('dateFrom');
+  var tEl = document.getElementById('dateTo');
+  if(fEl){ fEl.min='2026-01-01'; fEl.value=dashFrom; }
+  if(tEl){ tEl.max=dashTo; tEl.value=dashTo; }
+  updatePeriodLabel();
+}
+
+function setPreset(days, btn){
   document.querySelectorAll('.p-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
+  var today = new Date();
+  var from  = new Date(today);
+  from.setDate(from.getDate() - days);
+  dashTo   = today.toISOString().split('T')[0];
+  dashFrom = from.toISOString().split('T')[0];
+  var fEl = document.getElementById('dateFrom');
+  var tEl = document.getElementById('dateTo');
+  if(fEl) fEl.value = dashFrom;
+  if(tEl) tEl.value = dashTo;
+  updatePeriodLabel();
   renderDashboard();
 }
 
+function applyCustomRange(){
+  var fEl = document.getElementById('dateFrom');
+  var tEl = document.getElementById('dateTo');
+  if(!fEl||!tEl||!fEl.value||!tEl.value){ showToast('期間を選択してください'); return; }
+  if(fEl.value > tEl.value){ showToast('開始日は終了日より前にしてください'); return; }
+  dashFrom = fEl.value;
+  dashTo   = tEl.value;
+  document.querySelectorAll('.p-btn').forEach(function(b){b.classList.remove('active');});
+  updatePeriodLabel();
+  renderDashboard();
+}
+
+function updatePeriodLabel(){
+  var el = document.getElementById('periodLabel');
+  if(el) el.textContent = '集計期間: '+dashFrom+' 〜 '+dashTo;
+}
+
+function getDayRange(from, to){
+  var days=[], cur=new Date(from);
+  var end=new Date(to);
+  while(cur<=end){
+    days.push(cur.toISOString().split('T')[0]);
+    cur.setDate(cur.getDate()+1);
+  }
+  return days;
+}
+
 function renderDashboard(){
-  // 予約データを期間でフィルタ
-  var since=new Date(Date.now()-currentPeriod*86400000).toISOString().split('T')[0];
-  db.ref('reservations').orderByChild('date').startAt(since).once('value',function(snap){
-    var bill=0,golf=0,mj=0;
+  if(!dashFrom) initDashboardDates();
+
+  // ── 予約データ ──
+  db.ref('reservations').orderByChild('date').startAt(dashFrom).endAt(dashTo+'\uf8ff').once('value',function(snap){
+    var bill=0,golf=0,mj=0,total=0;
     var byDay={};
     snap.forEach(function(c){
       var r=c.val();
-      if(r.zone==='billiard')bill++;
-      else if(r.zone==='golf')golf++;
-      else if(r.zone==='mahjong')mj++;
-      var d=r.date||'';if(d){byDay[d]=(byDay[d]||0)+1;}
+      if(r.date<dashFrom||r.date>dashTo) return;
+      total++;
+      if(r.zone==='billiard') bill++;
+      else if(r.zone==='golf') golf++;
+      else if(r.zone==='mahjong') mj++;
+      var d=r.date||''; if(d) byDay[d]=(byDay[d]||0)+1;
     });
-    // カテゴリ別ドーナツ
+    // 数値表示
+    var rs = document.getElementById('resStats');
+    if(rs) rs.innerHTML =
+      '<span style="font-size:0.78rem;color:var(--gold)">🎱 '+bill+'件</span>'
+      +'<span style="font-size:0.78rem;color:#22c55e;margin-left:0.8rem">⛳ '+golf+'件</span>'
+      +'<span style="font-size:0.78rem;color:var(--purple);margin-left:0.8rem">🀄 '+mj+'件</span>'
+      +'<span style="font-size:0.78rem;color:var(--muted);margin-left:0.8rem">合計 '+total+'件</span>';
+    // ドーナツ
     updateChart('chartReservations','doughnut',
       ['ビリヤード','ゴルフ','麻雀'],
       [bill,golf,mj],
       ['rgba(201,168,76,0.8)','rgba(34,197,94,0.8)','rgba(168,85,247,0.8)']
     );
-    // 予約推移
-    var days=getDayLabels(currentPeriod);
+  });
+
+  // ── アクセスデータ ──
+  db.ref('access').once('value',function(snap){
+    var days = getDayRange(dashFrom, dashTo);
+    var byDay={}, totalAccess=0, mobile=0, pc=0;
+    snap.forEach(function(c){
+      var d=c.key, v=c.val();
+      if(d>=dashFrom && d<=dashTo){
+        var cnt=v.count||0;
+        byDay[d]=cnt; totalAccess+=cnt;
+        if(v.device){mobile+=(v.device.mobile||0);pc+=(v.device.pc||0);}
+      }
+    });
     var dayData=days.map(function(d){return byDay[d]||0;});
+    var as=document.getElementById('accessStats');
+    if(as) as.textContent='合計 '+totalAccess+'回（PC:'+pc+' / スマホ:'+mobile+'）';
     updateChart('chartAccess','line',days,dayData,['rgba(59,130,246,0.8)'],true);
   });
-  // 会員数推移
+
+  // ── 会員データ ──
   db.ref('members').once('value',function(snap){
-    var cnt=snap.numChildren();
-    updateChart('chartMembers','bar',['総会員数'],[cnt],['rgba(201,168,76,0.8)']);
-  });
-  // 稼働状況（マトリックスから）
-  var today=new Date().toISOString().split('T')[0];
-  db.ref('tableStatus/'+today).once('value',function(snap){
-    var empty=0,reserved=0,using=0,total=0;
+    var days=getDayRange(dashFrom, dashTo);
+    var byDay={}, newMembers=0, total=0;
     snap.forEach(function(c){
-      var v=c.val();total++;
-      if(v==='empty')empty++;else if(v==='reserved')reserved++;else using++;
+      var m=c.val(); total++;
+      var d=(m.joinedAt||'').slice(0,10);
+      if(d>=dashFrom && d<=dashTo){ byDay[d]=(byDay[d]||0)+1; newMembers++; }
     });
+    var dayData=days.map(function(d){return byDay[d]||0;});
+    var ms=document.getElementById('memberStats');
+    if(ms) ms.textContent='期間内新規: '+newMembers+'名 / 累計: '+total+'名';
+    updateChart('chartMembers','bar',days,dayData,['rgba(201,168,76,0.7)']);
+  });
+
+  // ── 稼働状況 ──
+  var days=getDayRange(dashFrom, dashTo);
+  var empty=0, reserved=0, using=0;
+  var promises=days.map(function(d){
+    return db.ref('tableStatus/'+d).once('value');
+  });
+  Promise.all(promises).then(function(snaps){
+    snaps.forEach(function(snap){
+      snap.forEach(function(c){
+        var v=c.val();
+        if(v==='empty') empty++;
+        else if(v==='reserved') reserved++;
+        else if(v==='using') using++;
+      });
+    });
+    var us=document.getElementById('usageStats');
+    var tot=empty+reserved+using;
+    if(us&&tot>0) us.textContent='空き:'+Math.round(empty/tot*100)+'% 予約済:'+Math.round(reserved/tot*100)+'% 使用中:'+Math.round(using/tot*100)+'%';
     updateChart('chartUsage','doughnut',
       ['空き','予約済','使用中'],
       [empty,reserved,using],
@@ -1277,36 +1399,26 @@ function renderDashboard(){
   });
 }
 
-function getDayLabels(days){
-  var labels=[];
-  for(var i=days-1;i>=0;i--){
-    var d=new Date(Date.now()-i*86400000);
-    labels.push(d.toISOString().split('T')[0]);
-  }
-  return labels;
-}
-
 function updateChart(canvasId, type, labels, data, colors, fill){
-  var ctx=document.getElementById(canvasId);if(!ctx)return;
+  var ctx=document.getElementById(canvasId); if(!ctx)return;
   if(charts[canvasId]) charts[canvasId].destroy();
   charts[canvasId]=new Chart(ctx,{
     type:type,
-    data:{
-      labels:labels,
-      datasets:[{
-        label:'',
-        data:data,
-        backgroundColor:type==='line'?'rgba(59,130,246,0.15)':colors,
-        borderColor:type==='line'?'rgba(59,130,246,0.8)':colors,
-        borderWidth:type==='line'?2:1,
-        fill:type==='line'?(fill||false):undefined,
-        tension:0.4,
-        pointRadius:type==='line'?3:undefined
-      }]
-    },
+    data:{labels:labels,datasets:[{
+      label:'',data:data,
+      backgroundColor:type==='line'?'rgba(59,130,246,0.15)':colors,
+      borderColor:type==='line'?'rgba(59,130,246,0.8)':colors,
+      borderWidth:type==='line'?2:1,
+      fill:type==='line'?(fill||false):undefined,
+      tension:0.4,
+      pointRadius:type==='line'?3:undefined
+    }]},
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#dde4ed',font:{size:11}}},tooltip:{callbacks:{label:function(c){return ' '+c.formattedValue;}}}},
+      plugins:{
+        legend:{labels:{color:'#dde4ed',font:{size:11}}},
+        tooltip:{callbacks:{label:function(c){return ' '+c.formattedValue+' '+(type==='doughnut'?'件':'');}}}
+      },
       scales:type==='line'||type==='bar'?{
         x:{ticks:{color:'#5a6a7a',font:{size:9},maxRotation:45},grid:{color:'rgba(255,255,255,0.05)'}},
         y:{ticks:{color:'#5a6a7a',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}
@@ -1314,6 +1426,100 @@ function updateChart(canvasId, type, labels, data, colors, fill){
     }
   });
 }
+
+// ================================================================
+// CSV EXPORT — ダッシュボード（詳細情報付き）
+// ================================================================
+function exportDashboardCSV(){
+  showToast('CSVを生成中...');
+  var allData = [];
+  var pending = 4;
+  function checkDone(){ pending--; if(pending===0) generateCSV(allData); }
+
+  // 予約データ
+  db.ref('reservations').orderByChild('date').startAt(dashFrom).endAt(dashTo+'\uf8ff').once('value',function(snap){
+    snap.forEach(function(c){
+      var r=c.val();
+      if(r.date<dashFrom||r.date>dashTo) return;
+      allData.push({
+        種別:'予約', 日付:r.date||'', 時刻:(r.createdAt||'').slice(11,19),
+        エリア:r.area||r.zone||'', テーブル:r.table||'',
+        開始時間:r.time||'', 利用時間:r.duration||'',
+        名前:r.name||'', 電話:r.phone||'',
+        状態:r.status||'', 作成日時:r.createdAt||''
+      });
+    });
+    checkDone();
+  });
+
+  // エントリーデータ
+  db.ref('entries').once('value',function(snap){
+    snap.forEach(function(c){
+      var e=c.val();
+      var d=(e.date||'').slice(0,10);
+      if(d>=dashFrom && d<=dashTo){
+        allData.push({
+          種別:'イベントエントリー', 日付:d, 時刻:(e.date||'').slice(11,19),
+          エリア:'', テーブル:'',
+          開始時間:'', 利用時間:'',
+          名前:e.name||'', 電話:e.phone||'',
+          状態:e.eventName||e.eventId||'', 作成日時:e.date||''
+        });
+      }
+    });
+    checkDone();
+  });
+
+  // アクセスログ
+  db.ref('accessLog').orderByChild('date').startAt(dashFrom).endAt(dashTo+'\uf8ff').once('value',function(snap){
+    snap.forEach(function(c){
+      var a=c.val();
+      if((a.date||'')<dashFrom||(a.date||'')>dashTo) return;
+      allData.push({
+        種別:'アクセス', 日付:a.date||'', 時刻:a.hour+':00',
+        エリア:a.page||'homepage', テーブル:a.device||'',
+        開始時間:'', 利用時間:'',
+        名前:'', 電話:'',
+        状態:'', 作成日時:a.timestamp||''
+      });
+    });
+    checkDone();
+  });
+
+  // 会員データ
+  db.ref('members').once('value',function(snap){
+    snap.forEach(function(c){
+      var m=c.val();
+      var d=(m.joinedAt||'').slice(0,10);
+      if(d>=dashFrom && d<=dashTo){
+        allData.push({
+          種別:'会員登録', 日付:d, 時刻:(m.joinedAt||'').slice(11,19),
+          エリア:m.source||'', テーブル:'',
+          開始時間:'', 利用時間:'',
+          名前:m.name||'', 電話:m.phone||'',
+          状態:'来店'+m.visits+'回', 作成日時:m.joinedAt||''
+        });
+      }
+    });
+    checkDone();
+  });
+}
+
+function generateCSV(allData){
+  if(!allData.length){ showToast('データがありません'); return; }
+  // 日時でソート
+  allData.sort(function(a,b){ return a.作成日時>b.作成日時?1:-1; });
+  var headers=['種別','日付','時刻','エリア','テーブル','開始時間','利用時間','名前','電話','状態','作成日時'];
+  var rows=[headers].concat(allData.map(function(r){ return headers.map(function(h){ return (r[h]||'').toString().replace(/,/g,'、'); }); }));
+  var csv=rows.map(function(r){return r.join(',');}).join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='palace-club-dashboard-'+dashFrom+'_'+dashTo+'.csv';
+  a.click();
+  showToast('✅ CSVをダウンロードしました（'+allData.length+'件）');
+}
+
+
 
 // ================================================================
 // CSV EXPORT
